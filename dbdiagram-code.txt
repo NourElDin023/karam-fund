@@ -1,0 +1,89 @@
+// KaramFund Database Schema
+// Copy all of this code and paste it into https://dbdiagram.io/
+
+Table Users {
+  id int [pk, increment]
+  username varchar [unique]
+  email varchar [unique]
+  password varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Projects {
+  id int [pk, increment]
+  owner_id int
+  title varchar
+  description text
+  goal_amount decimal
+  start_date date
+  end_date date
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Donations {
+  id int [pk, increment]
+  user_id int
+  project_id int
+  amount decimal
+  created_at timestamp
+}
+
+Table Categories {
+  id int [pk, increment]
+  name varchar
+  description text
+}
+
+// Join table for Projects and Categories (many-to-many)
+Table ProjectCategories {
+  id int [pk, increment]
+  project_id int
+  category_id int
+}
+
+Table Comments {
+  id int [pk, increment]
+  user_id int
+  project_id int
+  text text
+  created_at timestamp
+}
+
+Table Ratings {
+  id int [pk, increment]
+  user_id int
+  project_id int
+  rating int
+  created_at timestamp
+}
+
+Table Reports {
+  id int [pk, increment]
+  user_id int
+  project_id int
+  reason text
+  created_at timestamp
+}
+
+Table Media {
+  id int [pk, increment]
+  project_id int
+  image_url varchar
+  created_at timestamp
+}
+
+// Relationships - defined once at the end
+Ref: Projects.owner_id > Users.id
+Ref: Donations.user_id > Users.id
+Ref: Donations.project_id > Projects.id
+Ref: Comments.user_id > Users.id
+Ref: Comments.project_id > Projects.id
+Ref: Ratings.user_id > Users.id
+Ref: Ratings.project_id > Projects.id
+Ref: Reports.user_id > Users.id
+Ref: Reports.project_id > Projects.id
+Ref: Media.project_id > Projects.id
+Ref: ProjectCategories.project_id > Projects.id
+Ref: ProjectCategories.category_id > Categories.id
