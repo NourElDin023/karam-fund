@@ -37,6 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    #Karamfund Apps
+    'accounts',
+    'projects',
+    'donations',
+    'categories',
+    'comments',
+    'ratings',
+    'reports',
 ]
 
 MIDDLEWARE = [
