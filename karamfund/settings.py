@@ -45,13 +45,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     #Karamfund Apps
-    'accounts',
-    'projects',
-    'donations',
-    'categories',
-    'comments',
-    'ratings',
-    'reports',
+    'admin_dashboard.apps.AdminDashboardConfig',
+    'donations.apps.DonationsConfig',
+    'interactions.apps.InteractionsConfig',
+    'projects.apps.ProjectsConfig',
+    'reports.apps.ReportsConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
