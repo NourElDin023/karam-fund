@@ -1,21 +1,21 @@
 # `User` Model Fields
 
-| Field Name       | Field Key          | Nullable | Data Type   | Key | Default Value |
-| ---------------- | ------------------ | :------: | ----------- | --- | ------------- |
-| ID               | `id`               |    ❌    | `int`       | PK  |               |
-| First Name       | `first_name`       |    ❌    | `varchar`   | ❌  |               |
-| Last Name        | `last_name`        |    ❌    | `varchar`   | ❌  |               |
-| Email            | `email`            |    ❌    | `varchar`   | ❌  |               |
-| Password         | `password`         |    ❌    | `varchar`   | ❌  |               |
-| Phone Number     | `phone_number`     |    ❌    | `varchar`   | ❌  |               |
-| Is Admin         | `is_admin`         |    ❌    | `boolean`   | ❌  | `false`       |
-| Profile Picture  | `profile_picture`  |    ✔️    | `varchar`   | ❌  | `NULL`        |
-| Bio              | `bio`              |    ✔️    | `text`      | ❌  | `NULL`        |
-| Email Activated  | `is_activated`     |    ✔️    | `boolean`   | ❌  | `false`       |
-| Birthdate        | `birthdate`        |    ✔️    | `date`      | ❌  | `NULL`        |
-| Facebook Profile | `facebook_profile` |    ✔️    | `varchar`   | ❌  | `NULL`        |
-| Country          | `country`          |    ✔️    | `varchar`   | ❌  | `NULL`        |
-| Created At       | `created_at`       |    ❌    | `timestamp` | ❌  | Timestamp     |
+| Field Name       | Field Key          | Nullable | Data Type      | Key | Default Value |
+| ---------------- | ------------------ | :------: | -------------- | --- | ------------- |
+| ID               | `id`               |    ❌    | `int`          | PK  |               |
+| First Name       | `first_name`       |    ❌    | `varchar`      | ❌  |               |
+| Last Name        | `last_name`        |    ❌    | `varchar`      | ❌  |               |
+| Email            | `email`            |    ❌    | `varchar`      | ❌  |               |
+| Password         | `password`         |    ❌    | `varchar`      | ❌  |               |
+| Phone Number     | `phone_number`     |    ❌    | `varchar (12)` | ❌  |               |
+| Is Admin         | `is_admin`         |    ❌    | `boolean`      | ❌  | `false`       |
+| Profile Picture  | `profile_picture`  |    ✔️    | `varchar`      | ❌  | `NULL`        |
+| Bio              | `bio`              |    ✔️    | `text`         | ❌  | `NULL`        |
+| Email Activated  | `is_activated`     |    ✔️    | `boolean`      | ❌  | `false`       |
+| Birthdate        | `birthdate`        |    ✔️    | `date`         | ❌  | `NULL`        |
+| Facebook Profile | `facebook_profile` |    ✔️    | `varchar`      | ❌  | `NULL`        |
+| Country          | `country`          |    ✔️    | `varchar`      | ❌  | `NULL`        |
+| Created At       | `created_at`       |    ❌    | `timestamp`    | ❌  | Timestamp     |
 
 Notes:
 
