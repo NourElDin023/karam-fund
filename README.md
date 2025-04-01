@@ -96,9 +96,8 @@ git branch -d feature/your-feature-name
 5. **Delete the feature branch after merging.**  
 
 Following these steps ensures a smooth collaboration and clean repository history. 🚀
-
+<!-- 
 ---
-
 # 🚀 KaramFund Project - Task List
 
 ## ✅ Completed Tasks
@@ -162,6 +161,7 @@ Following these steps ensures a smooth collaboration and clean repository histor
 - [ ] Implement reporting system (users flagging issues)
 - [ ] Set up admin dashboard for managing users & projects
 - [ ] Manage reported content (review/delete)
-- [ ] Generate analytics for project performance
----
+- [ ] Generate analytics for project performance 
+--- 
 🚀 *Let's build KaramFund together!*
+-->
