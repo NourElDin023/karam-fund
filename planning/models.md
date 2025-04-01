@@ -32,7 +32,7 @@ Notes:
 | Description    | `description`    |    ❌    | `text`    | ❌                        |               |
 | target_amount  | `target_amount`  |    ❌    | `decimal` | ❌                        |               |
 | current_amount | `current_amount` |    ❌    | `decimal` | ❌                        | 0             |
-| Category       | `category`       |    ❌    | `varchar` | FK (`ProjectCategory.id`) |               |
+| Category       | `category`       |    ❌    | `int`     | FK (`ProjectCategory.id`) |               |
 | Creator        | `creator`        |    ❌    | `int`     | FK (`User.id`)            |               |
 | campaign_start | `campaign_start` |    ❌    | `date`    | ❌                        | Timestamp     |
 | campaign_end   | `campaign_end`   |    ❌    | `date`    | ❌                        |               |
@@ -137,6 +137,44 @@ Notes:
 
 - `avg_rating` field in the `Project` should be updated each time a user rates a project.
 - To show top 5 highest-rated running projects in the homepage, we will need sort the projects by `avg_rating` and get the top 5 projects, and it should also be updated each time a user rates a project.
+
+# `ProjectReport` Model Fields
+
+| Field Name | Field Key    | Nullable | Data Type   | Key               | Default Value |
+| ---------- | ------------ | :------: | ----------- | ----------------- | ------------- |
+| ID         | `id`         |    ❌    | `int`       | PK                |               |
+| Reporter   | `reporter`   |    ❌    | `int`       | FK (`User.id`)    |               |
+| Project    | `project`    |    ❌    | `int`       | FK (`Project.id`) |               |
+| Reason     | `reason`     |    ❌    | `text`      | ❌                |               |
+| Created At | `created_at` |    ❌    | `timestamp` | ❌                | Timestamp     |
+| Status     | `status`     |    ❌    | `varchar`   | ❌                | `'pending'`   |
+
+Notes:
+
+- Users can report a project for reasons like **scams, misleading information, offensive content, etc.**
+- Admins **review reports** and update `status` (`pending`, `reviewed`, `accepted`, `rejected`).
+- If the report is **accepted**, the `is_deleted` field in the `Project` model is updated to `true`.
+
+---
+
+# `CommentReport` Model Fields
+
+| Field Name | Field Key    | Nullable | Data Type   | Key                       | Default Value |
+| ---------- | ------------ | :------: | ----------- | ------------------------- | ------------- |
+| ID         | `id`         |    ❌    | `int`       | PK                        |               |
+| Reporter   | `reporter`   |    ❌    | `int`       | FK (`User.id`)            |               |
+| Comment    | `comment`    |    ❌    | `int`       | FK (`ProjectComments.id`) |               |
+| Reason     | `reason`     |    ❌    | `text`      | ❌                        |               |
+| Created At | `created_at` |    ❌    | `timestamp` | ❌                        | Timestamp     |
+| Status     | `status`     |    ❌    | `varchar`   | ❌                        | `'pending'`   |
+
+Notes:
+
+- Users can report **comments** for **spam, harassment, inappropriate content, etc.**
+- Admins review reports and update `status` (`pending`, `reviewed`, `accepted`, `rejected`).
+- If the report is **accepted**, the `is_deleted` field in the `ProjectComments` model is updated to `true`.
+
+---
 
 # `AdminSelectedProjects` Model Fields
 
