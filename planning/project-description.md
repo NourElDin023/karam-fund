@@ -16,12 +16,22 @@ Karam Fund is a web platform for starting fundraising projects in Egypt. The pla
     -   Email
     -   Password
     -   Confirm password
-    -   Mobile phone (validated for Egyptian numbers)
+    -   Phone number (validated for Egyptian numbers)
     -   Profile Picture
 -   Activation email after registration
-    -   Email contains activation link
-    -   Link expires after 24 hours
-    -   Users cannot login without activation
+    -    Email contains activation link (is_activated)
+    -    Link expires after 24 hours
+    -    Users cannot login without activation
+
+We have added the following fields to `User` model:
+
+
+-   Bio
+-   Email activated
+-   Birthdate
+-   Facebook profile
+-   Country
+
 
 #### Login
 
@@ -43,9 +53,10 @@ Karam Fund is a web platform for starting fundraising projects in Egypt. The pla
     -   Birthdate
     -   Facebook profile
     -   Country
--   Account deletion
-    -   Confirmation message before deletion
-    -   Password confirmation for account deletion (Bonus)
+-   Account deletion (Disabled for admin users)
+    -   Confirmation message before deletion (Only in frontend)
+    -   Password confirmation for account deletion (Bonus - Add password field to the request body)
+    -   When a user deletes their account, all their projects and donations are moved to a dummy user `deleted_user` then the user entry is deleted from the database. This is to keep the integrity of the database and avoid orphaned records.
 
 ### 2. Projects
 
@@ -64,7 +75,7 @@ Karam Fund is a web platform for starting fundraising projects in Egypt. The pla
 
 -   View projects and donate
 -   Comment on projects
-    -   Nested comments/replies (Bonus)
+    -   Nested comments/replies (Bonus - Handled with `parent` field in the comment model (something similar to reddit) and the parent of the root comment is `null`)
 -   Report inappropriate projects
 -   Report inappropriate comments
 -   Rate projects
@@ -94,7 +105,7 @@ Similar projects for reference:
 
 ## Project Timeline
 
--   Deadline: May 16, 2019
+-   Deadline: April 11, 2025
 
 ## Project Structure
 
