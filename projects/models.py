@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -29,3 +30,33 @@ class ProjectCategory(models.Model):
     
     def __str__(self):
         return self.name
+    
+class Project(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    target_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    category = models.ForeignKey(ProjectCategory, on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign_start = models.DateTimeField(auto_now_add=True)
+    campaign_end = models.DateField()
+    is_active = models.BooleanField(default=True)
+    avg_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    is_reported = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+    is_cancelled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    def cancel_project(self):
+        if self.current_amount < (0.25 * self.target_amount):
+            self.is_cancelled = True
+            self.save()
+
+    def check_project_status(self):
+        from django.utils.timezone import now
+
+        if now().date() > self.campaign_end or self.is_cancelled:
+            self.is_active = False
+            self.save()
