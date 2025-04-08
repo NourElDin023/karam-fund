@@ -1,10 +1,64 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import User
 import re
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import EmailMessage
+from django.conf import settings
+import threading
+from django.contrib.auth.tokens import default_token_generator
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send()
+
+
+def send_activation_email(user, request):
+    current_site = get_current_site(request)
+    email_subject = 'Activate Your Karam Fund Account'
+    email_body = render_to_string('users/activation_email.html', {
+        'user': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': default_token_generator.make_token(user),
+    })
+
+    email = EmailMessage(
+        email_subject,
+        email_body,
+        settings.EMAIL_HOST_USER,  # Changed from EMAIL_FROM_ADDRESS to EMAIL_HOST_USER
+        [user.email]
+    )
+    email.content_subtype = "html"
+    EmailThread(email).start()
+
+
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Your account has been activated! You can now login.")
+        return redirect('users:login')
+    else:
+        messages.error(request, "Activation link is invalid or has expired.")
+        return redirect('users:login')
 
 
 # Create your views here.
@@ -72,8 +126,13 @@ def register(request):
                 first_name=first_name,
                 last_name=last_name,
                 phone_number=phone_number,
+                is_active=False,  # Set user as inactive until email verification
             )
-            messages.success(request, "Registration successful! You can now login.")
+            
+            # Send activation email
+            send_activation_email(user, request)
+            
+            messages.success(request, "Registration successful! Please check your email to activate your account.")
             return redirect("users:login")
         except Exception as e:
             messages.error(request, f"Registration failed: {str(e)}")
@@ -104,7 +163,7 @@ def login(request):
         # Try to authenticate the user
         # Since we're using email as username, we need to use the email as username
         user = authenticate(username=email, password=password)
-        
+        # TODO :Need To Be Checked as it shows "Invalid email or password" if account is not active
         if user is not None:
             if user.is_active:
                 # Login the user
@@ -112,6 +171,11 @@ def login(request):
                 return redirect("/")  # Redirect to homepage or dashboard
             else:
                 messages.error(request, "Your account is not active. Please check your email for activation link.")
+                # Resend activation email option
+                resend = request.POST.get("resend_activation")
+                if resend:
+                    send_activation_email(user, request)
+                    messages.info(request, "Activation email has been resent.")
         else:
             messages.error(request, "Invalid email or password")
         
