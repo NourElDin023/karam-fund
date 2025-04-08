@@ -15,6 +15,9 @@ class commonFields(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        abstract = True
+
 
 class ProjectComments(commonFields):
     """Model for project comments"""
