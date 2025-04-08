@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Activate Your Karam Fund Account</title>
-</head>
-<body>
-    <h2>Hello {{ user.first_name }},</h2>
-    <p>Thank you for registering on Karam Fund. Please click the link below to activate your account:</p>
-    <p><a href="{{ activation_link }}">{{ activation_link }}</a></p>
-    <p>This link will expire in 24 hours.</p>
-    <p>If you did not request this, please ignore this email.</p>
-    <p>Best regards,</p>
-    <p>The Karam Fund Team</p>
-</body>
-</html>
+{% extends 'users/base.html' %}
+
+{% block title %}Activate Your Karam Fund Account{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title">Hello {{ user.first_name }},</h2>
+                <p class="card-text">Thank you for registering on Karam Fund. Please click the link below to activate your account:</p>
+                <p class="card-text"><a href="{{ activation_link }}" class="btn btn-primary">{{ activation_link }}</a></p>
+                <p class="card-text">This link will expire in 24 hours.</p>
+                <p class="card-text">If you did not request this, please ignore this email.</p>
+                <p class="card-text">Best regards,</p>
+                <p class="card-text">The Karam Fund Team</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
