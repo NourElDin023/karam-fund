@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import User
@@ -82,4 +83,39 @@ def register(request):
 
 
 def login(request):
+    if request.method == "POST":
+        email = request.POST.get("email").strip()
+        password = request.POST.get("password").strip()
+        
+        # Basic validation
+        errors = []
+        
+        if not email:
+            errors.append("Email is required")
+            
+        if not password:
+            errors.append("Password is required")
+        
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return render(request, "users/login.html", {"email": email})
+        
+        # Try to authenticate the user
+        # Since we're using email as username, we need to use the email as username
+        user = authenticate(username=email, password=password)
+        
+        if user is not None:
+            if user.is_active:
+                # Login the user
+                auth_login(request, user)
+                return redirect("/")  # Redirect to homepage or dashboard
+            else:
+                messages.error(request, "Your account is not active. Please check your email for activation link.")
+        else:
+            messages.error(request, "Invalid email or password")
+        
+        return render(request, "users/login.html", {"email": email})
+    
+    # If GET request, show empty form
     return render(request, "users/login.html", {})
