@@ -11,19 +11,26 @@
                     <h2 class="text-center">Create Your Account</h2>
                 </div>
                 <div class="card-body">
+                    {% if messages %}
+                    <div class="mb-3 p-2 rounded bg-warning">
+                        {% for message in messages %}
+                        <div class="mb-0 px-0 py-1">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="first_name" class="form-label">First Name</label>
-                            <input type="text" name="first_name" id="first_name" required class="form-control">
+                            <input type="text" name="first_name" id="first_name" required class="form-control" value="{{ first_name|default:'' }}">
                         </div>
                         <div class="mb-3">
                             <label for="last_name" class="form-label">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" required class="form-control">
+                            <input type="text" name="last_name" id="last_name" required class="form-control" value="{{ last_name|default:'' }}">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" required class="form-control">
+                            <input type="email" name="email" id="email" required class="form-control" value="{{ email|default:'' }}">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -35,7 +42,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="phone_number" class="form-label">Phone Number</label>
-                            <input type="tel" name="phone_number" id="phone_number" required class="form-control">
+                            <input type="tel" name="phone_number" id="phone_number" required class="form-control" value="{{ phone_number|default:'' }}">
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Register</button>
