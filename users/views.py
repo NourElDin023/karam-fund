@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import User
@@ -183,3 +183,9 @@ def login(request):
     
     # If GET request, show empty form
     return render(request, "users/login.html", {})
+
+def logout(request):
+    # Handle both POST and GET requests
+    auth_logout(request)
+    messages.success(request, "You have been logged out successfully.")
+    return redirect("users:login")
