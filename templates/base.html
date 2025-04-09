@@ -44,9 +44,11 @@
                     </form>
 
                     <div class="nav-item dropdown">
+                        {% if user.is_authenticated %}
+                        <!-- Menu for logged-in users -->
                         <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> Account
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
@@ -55,8 +57,28 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            <li>
+                                <form method="post" action="{% url 'users:logout' %}" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-left"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
+                        {% else %}
+                        <!-- Menu for guests -->
+                        <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'users:login' %}"><i
+                                        class="bi bi-box-arrow-in-right"></i> Sign In</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:register' %}"><i
+                                        class="bi bi-person-plus"></i> Sign Up</a></li>
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
             </div>
