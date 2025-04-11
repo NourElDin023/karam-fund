@@ -5,10 +5,25 @@
 
 {% block content %}
 
-<h2>
-    Add Project Page
-</h2>
 
+<div>
+    
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
 
+    <!-- إضافات أخرى مثل الوسائط (Images, Videos) -->
+    <input type="file" name="media_images" multiple />
+    <input type="url" name="media_videos" />
+
+    <!-- إضافة التاغات -->
+    <div>
+        <label for="tags">Tags</label>
+        {{ form.tags }}
+    </div>
+
+    <button type="submit">إضافة المشروع</button>
+</form>
+</div>
 
 {% endblock %}
