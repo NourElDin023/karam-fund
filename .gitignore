@@ -1,3 +1,4 @@
 __pycache__/
 .env
 0*_initial.py
+.vscode/mcp.json
