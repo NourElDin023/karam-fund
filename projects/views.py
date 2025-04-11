@@ -7,9 +7,4 @@ from .models import *
 
 
 def addProject(req):
-    
-    
-    
-    
-    
     return render(req,'add_project.html')
