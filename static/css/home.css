@@ -34,14 +34,3 @@
      height: calc(100% - 200px);
      /* Calculate remaining height */
  }
-
- .category-card {
-     transition: all 0.3s ease;
-     border-radius: 8px;
- }
-
- .category-card:hover {
-     transform: translateY(-5px);
-     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-     background-color: #f8f9fa;
- }

@@ -92,7 +92,7 @@
             {% endfor %}
         </div>
         <!-- Categories -->
-        <h2 class="mb-4">Categories</h2>
+        <h2 class="mb-4">Browse Categories</h2>
         <div class="d-flex flex-wrap gap-2 mb-5">
             {% for category in categories %}
                 <a href="/projects/?category={{ category.id }}"
@@ -102,45 +102,5 @@
                 </a>
             {% endfor %}
         </div>
-        <h2 class="mb-4">Browse Categories</h2>
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-            {% for category in categories %}
-                <div class="col">
-                    <a href="/projects/?category={{ category.id }}"
-                       class="text-decoration-none">
-                        <div class="card h-100 category-card shadow-sm">
-                            <div class="card-body text-center">
-                                <h5 class="card-title mb-0">{{ category.name }}</h5>
-                                <small class="text-muted">{{ category.project_count }} projects</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-        <!-- Search Results -->
-        {% if search_results %}
-            <h2 class="mb-4">Search Results</h2>
-            <div class="row">
-                {% for project in search_results %}
-                    <div class="col-md-4 mb-4">
-                        <a href="/projects/{{ project.id }}/" class="card">
-                            {% if project.media.first and project.media.first.image %}
-                                <img src="{{ project.media.first.image.url }}"
-                                     class="card-img-top"
-                                     alt="{{ project.title }}">
-                            {% else %}
-                                <img src="/static/default-image.jpg"
-                                     class="card-img-top"
-                                     alt="{{ project.title }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ project.title }}</h5>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
 {% endblock %}
