@@ -1,8 +1,45 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 from django.views.generic import DetailView
-from .models import Project
+from .models import Project,projectMedia
+from .forms import AddNewProject
 from interactions.models import ProjectComments, ProjectRatings
 from django.db.models import Avg, Count
+
+# add New Project
+@login_required
+def addProject(req):
+    if req.method == "POST":
+        form = AddNewProject(req.POST, req.FILES)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.creator = req.user
+            if not project.campaign_end:
+                project.campaign_end = project.campaign_start
+            project.save()
+
+            # Handle multiple image uploads
+            images = req.FILES.getlist('images')
+            if images:
+                for image in images:
+                    projectMedia.objects.create(project=project, image=image, media_type='image')
+
+            messages.success(req, "Project added successfully!")
+            return redirect('project_details', project_id=project.id)
+        else:
+            messages.error(req, "There is an error in your data. Please check for errors.")
+    else:
+        form = AddNewProject()
+    return render(req, 'add_project.html', {'form': form})
+
+
+def project_details(req, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    return render(req, 'project_details.html', {'project': project})
+
+
 
 
 # Create your views here.

@@ -10,12 +10,11 @@ class Tag(models.Model):
         return self.name
     
 class projectMedia(models.Model):
-    project = models.ForeignKey('Project',related_name='media',on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='project_media/images/',blank=True,null=True)
-    video_url = models.URLField(max_length=200,blank=True,null=True)
-    media_type = models.CharField(max_length=20, choices=[('image','Image'),('video','Video')])
-    def __str__(self):
-        return f"Media for {self.project.title} ({self.media_type})"
+    project = models.ForeignKey('Project', related_name='media', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='project_media/images/', blank=True, null=True)
+    video_url = models.URLField(max_length=200, blank=True, null=True)
+    media_type = models.CharField(max_length=20, choices=[('image', 'Image'), ('video', 'Video')])
+    description = models.TextField(blank=True, null=True)
     
 class ProjectTags(models.Model):
     project = models.ForeignKey('Project',related_name='tags',on_delete=models.CASCADE)
