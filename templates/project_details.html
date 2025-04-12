@@ -1,0 +1,45 @@
+{% extends 'base.html'%}
+
+{% block title %}Add Project{% endblock %}
+
+
+{% block content %}
+
+
+<h1>{{ project.title }}</h1>
+        <p><strong>Description:</strong> {{ project.description }}</p>
+        <p><strong>Amount Raised:</strong> ${{ project.raised_amount }}</p>
+        <p><strong>Campaign Start:</strong> {{ project.campaign_start }}</p>
+        <p><strong>Campaign End:</strong> {{ project.campaign_end }}</p>
+
+        <h3>Creator: {{ project.creator.username }}</h3>
+        <h4>Tags:</h4>
+        <ul>
+            {% for tag in project.tags.all %}
+                <li>{{ tag.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Media:</h4>
+        {% for media in project.projectmedia_set.all %}
+            <div>
+                <img src="{{ media.image.url }}" alt="{{ media.title }}" style="width: 100px;">
+                <p>{{ media.description }}</p>
+            </div>
+        {% endfor %}
+
+        <h4>Comments:</h4>
+        {% for comment in project.comments.all %}
+            <div>
+                <strong>{{ comment.user.username }}:</strong> {{ comment.text }}
+            </div>
+        {% endfor %}
+
+        <div>
+            <a href="{% url 'add_Project' %}">Add a New Project</a>
+            <a href="#">Back to Projects</a>
+        </div>
+
+
+
+{% endblock %}
