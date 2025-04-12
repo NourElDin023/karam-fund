@@ -1,1 +1,106 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block CustomCss %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+        <!-- Slider for Highest Rated Projects -->
+        <h2 class="mb-4">Top 5 Highest Rated Projects</h2>
+        <div id="highestRatedSlider"
+             class="carousel slide mb-5"
+             data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for project in highest_rated_projects %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <a href="/projects/{{ project.id }}/" class="card">
+                            {% if project.media.first and project.media.first.image %}
+                                <img src="{{ project.media.first.image.url }}"
+                                     class="card-img-top"
+                                     alt="{{ project.title }}">
+                            {% else %}
+                                <img src="/static/default-image.jpg"
+                                     class="card-img-top"
+                                     alt="{{ project.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h3 class="card-title">{{ project.title }}</h3>
+                                <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#highestRatedSlider"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#highestRatedSlider"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <!-- Latest Projects -->
+        <h2 class="mb-4 text-center">Latest Projects</h2>
+        <div class="row">
+            {% for project in latest_projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-img-container">
+                            <img src="{{ project.media.first.image.url }}"
+                                 class="card-img-top img-fluid"
+                                 alt="{{ project.title }}">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                            <p class="card-text">{{ project.description|truncatechars:85 }}</p>
+                            <div class="mt-auto text-end">
+                                <a href="/projects/{{ project.id }}/" class="btn btn-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Featured Projects -->
+        <h2 class="mb-4 text-center">Featured Projects</h2>
+        <div class="row">
+            {% for featured in featured_projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-img-container">
+                            <img src="{{ featured.project.media.first.image.url }}"
+                                 class="card-img-top img-fluid"
+                                 alt="{{ featured.project.title }}">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">{{ featured.project.title }}</h5>
+                            <p class="card-text">{{ featured.project.description|truncatechars:85 }}</p>
+                            <div class="mt-auto text-end">
+                                <a href="/projects/{{ featured.project.id }}/" class="btn btn-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Categories -->
+        <h2 class="mb-4">Browse Categories</h2>
+        <div class="d-flex flex-wrap gap-2 mb-5">
+            {% for category in categories %}
+                <a href="/projects/?category={{ category.id }}"
+                   class="btn btn-outline-primary rounded-pill px-3">
+                    {{ category.name }}
+                    <span class="badge bg-primary ms-1">{{ category.project_count }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
