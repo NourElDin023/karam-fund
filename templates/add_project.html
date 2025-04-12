@@ -1,21 +1,24 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block title %}Add Project{% endblock %}
 
-
 {% block content %}
-
-<form method="post" novalidate>
-
-    {% csrf_token %}
-    {{form.as_p}}
-
-
-
-    <button type="submit" class="btn btn-primary">Add</button>
-
-</form>
-
-
-
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title">Add a New Project</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success">Add Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -21,6 +21,15 @@ def addProject(req):
             if not project.campaign_end:
                 project.campaign_end = project.campaign_start 
             project.save()
+            
+            # Handle Image uploads
+            images = form.cleaned_data.get('images')
+            if images:
+                for image in images:
+                    projectMedia.objects.create(project=project, image=image)
+            
+            
+            
             messages.success(req,"Project added successfully!")
             return redirect('project_details',project_id=project.id)
         else:
@@ -35,8 +44,10 @@ def addProject(req):
 
 def  project_details(req,project_id):
     project = get_object_or_404(Project,id=project_id)
-    print(project)
-    return render(req, 'project_details.html', {'project': project})
+    
+    media = project.media.all()
+    
+    return render(req, 'project_details.html', {'project': project,'media':media})
 
 
 # def addProject(req):
