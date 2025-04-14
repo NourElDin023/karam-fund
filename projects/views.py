@@ -19,7 +19,7 @@ class ProjectDetailView(DetailView):
         project = self.get_object()
 
         context["media"] = project.media.filter(media_type="image")
-
+       
         context["total_ratings"] = project.projectratings_set.aggregate(
             total_ratings=Count("ID")
         )["total_ratings"]
