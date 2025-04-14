@@ -16,7 +16,7 @@
       <hr />
       <p>
         <strong>Rates:</strong> {{project.avg_rating}} |
-        <strong>Ratings:</strong>{{total_ratings}} review
+        <strong>Ratings:</strong>{{total_ratings}} review{% if total_ratings != 1 %}s{% endif %}
       </p>
     </div>
     <!-- close project details -->
