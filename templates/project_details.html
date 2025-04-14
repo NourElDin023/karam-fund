@@ -34,7 +34,7 @@
             {% for media in project.media.all %}
             <div class="col-md-4 mb-3">
                 <div class="card">
-                    <img src="{{ project.image.url }}" class="card-img-top" alt="{{ media.project.title }}">
+                    <img src="{{ media.image.url }}" class="card-img-top" alt="{{ media.project.title }}">
                     <div class="card-body">
                         <p class="card-text">{{ media.description }}</p>
                     </div>
