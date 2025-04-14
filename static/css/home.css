@@ -1,0 +1,36 @@
+ /* Custom CSS for consistent card heights and image handling */
+ .card {
+     transition: transform 0.2s;
+     /* Optional hover effect */
+ }
+
+ .card:hover {
+     transform: translateY(-5px);
+     /* Optional hover effect */
+     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+     /* Optional hover effect */
+ }
+
+ .card-img-container {
+     height: 200px;
+     /* Fixed height for image container */
+     overflow: hidden;
+     /* Hide overflow */
+     display: flex;
+     align-items: center;
+     /* Vertically center image */
+     justify-content: center;
+     /* Horizontally center image */
+ }
+
+ .card-img-top {
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+     /* Maintain aspect ratio while filling container */
+ }
+
+ .card-body {
+     height: calc(100% - 200px);
+     /* Calculate remaining height */
+ }
