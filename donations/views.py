@@ -4,6 +4,8 @@ from django.contrib import messages
 from projects.models import Project
 from .models import ProjectDonations
 from django.utils import timezone
+from decimal import Decimal
+
 
 # Create your views here.
 @login_required
@@ -26,18 +28,17 @@ def donate_to_project(request, project_id):
                 user=request.user,
                 project=project,
                 amount=amount,
-                created_at=timezone.now(),
             )
 
-            # Update the current amount of the project
-            project.current_amount += amount
+            # Update the current amount of the project - convert float to Decimal
+            project.current_amount += Decimal(str(amount))
             project.save()
 
             messages.success(
                 request,
                 f"Thank you for your donation of ${amount:.2f} to {project.title}!",
             )
-            return redirect("project_detail", pk=project_id)
+            return redirect("donate_to_project", project_id=project_id)
 
         except ValueError:
             messages.error(request, "Please enter a valid amount.")
