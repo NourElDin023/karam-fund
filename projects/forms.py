@@ -29,8 +29,13 @@ class ProjectRatingsForm(forms.ModelForm):
 
     rate = forms.ChoiceField(
         choices=RATING_LABELS,
-        widget=forms.Select,  # أو forms.Select() لو عايز Dropdown
+        widget=forms.Select(  
+                attrs={
+            "class": "form-control"
+        })
+        ,  
         label="Your Rating",
+     
     )
 
     class Meta:
