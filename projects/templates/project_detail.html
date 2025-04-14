@@ -16,35 +16,38 @@
       <hr />
       <p>
         <strong>Rates:</strong> {{project.avg_rating}} |
-        <strong>Ratings:</strong>{{total_ratings}} Rating
+        <strong>Ratings:</strong>{{total_ratings}} review
       </p>
     </div>
     <!-- close project details -->
 
     <!-- open:: project media slider -->
     <div class="col-md-6">
-      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          {% for image in media %}
-          <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}"
-            class="{% if forloop.first %}active{% endif %}"></li>
-          {% endfor %}
-        </ol>
+      <div id="highestRatedSlider"
+      class="carousel slide mb-5"
+      data-bs-ride="carousel" >
+       
         <div class="carousel-inner">
           {% for image in media %}
           <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ image.image.url }}" class="d-block w-100" alt="..." />
+            <img height="300px" src="{{ image.image.url }}" class="d-block w-100" alt="..." />
           </div>
           {% endfor %}
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+              <button class="carousel-control-prev"
+              type="button"
+              data-bs-target="#highestRatedSlider"
+              data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="visually-hidden">Previous</span>
+           </button>
+          <button class="carousel-control-next"
+              type="button"
+              data-bs-target="#highestRatedSlider"
+              data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
+          <span class="visually-hidden">Next</span>
+      </button>
       </div>
     </div>
     <!-- close:: project media slider -->
@@ -67,11 +70,11 @@
           <div class="col">
             <div class="card h-100 shadow-sm">
               {% if media and media.0 %}
-              <img src="{{ media.0.image.url }}" class="card-img-top" alt="{{ project.title }}" />
+              <img height="170px" src="{{ media.0.image.url }}" class="card-img-top" alt="{{ project.title }}" />
 
               {% endif %}
               <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ project.title }}</h5>
+                <h5 style="height: 60px;" class="card-title">{{ project.title }}</h5>
                 <p class="card-text text-muted">
                   {{ project.description|truncatewords:15 }}
                 </p>
@@ -88,22 +91,21 @@
   <!-- close :::button donation and similar projects by tags -->
 
   <!-- open:: project reviews -->
-  <div class="row d-flex justify-content-center  mt-5">
+  <div class="row d-flex justify-content-center  mt-5 mb-5">
     <div class="col-12">
       <h4 class=" mb-4">Project Reviews</h4>
       <hr>
     </div>
     <div class="col-4 border-end">
       <p>
-        <strong>Overall Rating:</strong> {{project.avg_rating}}
+        <strong>Overall Rating:</strong> {{project.avg_rating}} ➜ {{project.avg_rating_label}}
 
       </p>
       <p>
 
-        <strong>based on: </strong>{{total_ratings}} Rating
+        <strong>based on: </strong>{{total_ratings}} reviews
       </p>
-      <h5 class="mb-4">Rate this project:</h5>
-
+      <h5 class="mb-2">Rate this project:</h5>
       <form method="post">
         {% csrf_token %}
         <div class="card">
@@ -157,9 +159,9 @@
     <h5 class="mb-4">Comments:</h5>
     {% for comment in main_comments %}
     <div class="comments-list">
-      <div class="comment-box px-4 mb-4" style="border: 1px solid #ced4da; border-radius: 0.25rem;">
+      <div class="comment-box  mb-4" style="border: 1px solid #ced4da; border-radius: 0.25rem;">
         <div class="d-flex gap-3">
-          <img src="{{comment.user.profile_picture}}" alt="User Avatar" class="user-avatar" />
+          <img width="80px"  src="{{comment.user.profile_picture}}" alt="User Avatar" class="user-avatar" />
           <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h6 class="mb-0">{{comment.user.first_name}} {{comment.user.last_name}}</h6>
@@ -174,8 +176,7 @@
 
 
         {% for reply in replies %} {% if reply.parent_comment.ID == comment.ID %}
-        {{ reply.parent_comment.ID }}
-        {{ comment.ID }}
+        
 
         <div class="collapse" id="{{comment.ID}}">
           <div class="comment-box mt-3">
