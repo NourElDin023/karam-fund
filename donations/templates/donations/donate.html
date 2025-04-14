@@ -1,0 +1,110 @@
+{% extends 'base.html' %} {% block title %}Donate to Project{% endblock %} 
+{% block content %}
+<div class="donation-hero py-5">
+  <h1 class="mb-4">Support: {{ project.title }}</h1>
+  {% if messages %}
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} shadow-sm">{{ message }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row justify-content-center">
+    <div class="">
+      <div class="row bg-white rounded-lg shadow-sm overflow-hidden">
+        <!-- Project Details Column -->
+        <div class="col-md-6 p-5 bg-primary bg-opacity-10 border-end">
+          <div class="project-info">
+            <h3 class="mb-4 border-bottom pb-2">Project Information</h3>
+            <div class="mb-3">
+              <h5>{{ project.title }}</h5>
+              <p class="text-muted">
+                By {{ project.creator.first_name }} {{ project.creator.last_name }}
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Progress</span>
+                <span class="fw-bold"
+                  >{% widthratio project.current_amount project.target_amount 100 %}%</span
+                >
+              </div>
+              <div class="progress" style="height: 10px">
+                <div
+                  class="progress-bar bg-success"
+                  role="progressbar"
+                  style="width: {% widthratio project.current_amount project.target_amount 100 %}%"
+                  aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-6">
+                <p class="text-muted mb-1">Raised</p>
+                <h5>${{ project.current_amount }}</h5>
+              </div>
+              <div class="col-6">
+                <p class="text-muted mb-1">Goal</p>
+                <h5>${{ project.target_amount }}</h5>
+              </div>
+            </div>
+
+            <p>
+              <i class="bi bi-calendar-event me-2"></i>
+              <span class="text-muted">Campaign ends:</span>
+              <strong>{{ project.campaign_end|date:"F j, Y" }}</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Donation Form Column -->
+        <div class="col-md-6 p-5">
+          <h3 class="mb-4 border-bottom pb-2">Make Your Donation</h3>
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+              <label for="amount" class="form-label">Donation Amount</label>
+              <div class="input-group input-group-lg shadow-sm mb-2">
+                <span class="input-group-text bg-primary text-white">$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  name="amount"
+                  id="amount"
+                  class="form-control border-primary"
+                  required
+                  placeholder="Enter donation amount" />
+              </div>
+              <small class="form-text text-muted"
+                >Minimum donation amount is $0.01</small
+              >
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Confirm Donation
+              </button>
+            </div>
+
+            <div class="text-center">
+              <a
+                href="{% url 'project_detail' pk=project.id %}"
+                class="text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i> Return to Project
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
