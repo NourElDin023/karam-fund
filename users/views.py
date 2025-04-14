@@ -1,10 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import (
+    authenticate, 
+    login as auth_login, 
+    logout as auth_logout,
+    get_user_model
+)
+
+User = get_user_model()
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import User
-import re
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -13,6 +18,11 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 import threading
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+import re
+from django.views.generic import DetailView
+
 
 
 class EmailThread(threading.Thread):
@@ -189,3 +199,24 @@ def logout(request):
     auth_logout(request)
     messages.success(request, "You have been logged out successfully.")
     return redirect("users:login")
+
+
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/profile_detail.html'
+    context_object_name = 'profile_user'
+    
+    def get_object(self):
+        return self.request.user
+
+
+def profile_view(request):
+    profile_user = request.user
+    profile_data = getattr(profile_user, 'userprofile', None)
+    
+    context = {
+        'profile_user': profile_user,
+        'profile_data': profile_data,
+        'member_since': profile_user.date_joined.strftime("%B %d, %Y")
+    }
+    return render(request, 'users/profile_detail.html', context)
