@@ -12,9 +12,11 @@
                 </div>
                 <div class="card-body">
                     {% if messages %}
-                    <div class="mb-3 p-2 rounded bg-warning">
+                    <div class="mb-3">
                         {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} mb-0 px-0 py-1">{{ message }}</div>
+                            <div class="rounded {% if message.tags == 'error' %}bg-danger{% else %}bg-success{% endif %}">
+                                <div class="alert alert-{{ message.tags }} mb-0 p-2">{{ message }}</div>
+                            </div>
                         {% endfor %}
                     </div>
                     {% endif %}
