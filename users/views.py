@@ -128,7 +128,7 @@ def register(request):
                 phone_number=phone_number,
                 is_active=False,  # Set user as inactive until email verification
             )
-            
+
             # Send activation email
             send_activation_email(user, request)
             
@@ -160,27 +160,40 @@ def login(request):
                 messages.error(request, error)
             return render(request, "users/login.html", {"email": email})
         
-        # Try to authenticate the user
-        # Since we're using email as username, we need to use the email as username
-        user = authenticate(username=email, password=password)
-        # TODO :Need To Be Checked as it shows "Invalid email or password" if account is not active
-        if user is not None:
-            if user.is_active:
-                # Login the user
-                auth_login(request, user)
-                return redirect("/")  # Redirect to homepage or dashboard
-            else:
-                messages.error(request, "Your account is not active. Please check your email for activation link.")
-                # Resend activation email option
-                resend = request.POST.get("resend_activation")
-                if resend:
+        # Try to find the user by email first
+        try:
+            user = User.objects.get(email=email)
+
+            # Check if the password is correct
+            if user.check_password(password):
+                # Check if the user account is active
+                if user.is_active:
+                    # Login the user
+                    auth_login(request, user)
+                    # Redirect to homepage or dashboard after successful login
+                    # Check if there's a 'next' parameter in the URL
+                    next_url = request.GET.get("next")
+                    if next_url:
+                        return redirect(next_url)
+                    else:
+                        return redirect("/")  # Default redirect to homepage
+                else:
+                    # User exists but account is not active
                     send_activation_email(user, request)
-                    messages.info(request, "Activation email has been resent.")
-        else:
+                    messages.warning(
+                        request,
+                        "Your email is not activated. We've resent the activation email, please check your inbox.",
+                    )
+            else:
+                # Password is incorrect
+                messages.error(request, "Invalid email or password")
+
+        except User.DoesNotExist:
+            # User with this email does not exist
             messages.error(request, "Invalid email or password")
-        
+
+        # If login fails (inactive account, wrong password, user not found), render login page again
         return render(request, "users/login.html", {"email": email})
-    
     # If GET request, show empty form
     return render(request, "users/login.html", {})
 
