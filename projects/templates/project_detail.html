@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -28,11 +29,21 @@
       data-bs-ride="carousel" >
        
         <div class="carousel-inner">
-          {% for image in media %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img height="300px" src="{{ image.image.url }}" class="d-block w-100" alt="..." />
-          </div>
-          {% endfor %}
+          {% if media %}
+            {% for image in media %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              {% if image.image and image.image.url %}
+                <img height="300px" src="{{ image.image.url }}" class="d-block w-100" alt="{{ project.title }}" />
+              {% else %}
+                <img height="300px" src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="{{ project.title }}" />
+              {% endif %}
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="carousel-item active">
+              <img height="300px" src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="Default project image" />
+            </div>
+          {% endif %}
         </div>
               <button class="carousel-control-prev"
               type="button"
@@ -69,9 +80,10 @@
           {% with project=item.project media=item.media %}
           <div class="col">
             <div class="card h-100 shadow-sm">
-              {% if media and media.0 %}
+              {% if media and media.0 and media.0.image and media.0.image.url %}
               <img height="170px" src="{{ media.0.image.url }}" class="card-img-top" alt="{{ project.title }}" />
-
+              {% else %}
+              <img height="170px" src="{% static 'imgs/default-image.png' %}" class="card-img-top" alt="{{ project.title }}" />
               {% endif %}
               <div class="card-body d-flex flex-column">
                 <h5 style="height: 60px;" class="card-title">{{ project.title }}</h5>
