@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 
 from django.views.generic import DetailView
-from .models import Project, projectMedia
+from .models import Project, projectMedia, ProjectCategory
 from .forms import AddNewProject
 from interactions.models import ProjectComments, ProjectRatings
 from django.db.models import Avg, Count
@@ -38,6 +38,25 @@ def search_projects(request):
     }
     
     return render(request, 'search_results.html', context)
+
+# Projects by category view
+def projects_by_category(request, category_id):
+    category = get_object_or_404(ProjectCategory, id=category_id)
+    projects = Project.objects.filter(category=category, is_active=True, is_deleted=False)
+    
+    # Add media to each project for display
+    projects_with_media = [
+        {"project": proj, "media": proj.media.filter(media_type="image").first()}
+        for proj in projects
+    ]
+    
+    context = {
+        'category': category,
+        'projects': projects_with_media,
+        'count': len(projects_with_media)
+    }
+    
+    return render(request, 'category_projects.html', context)
 
 # add New Project
 @login_required
