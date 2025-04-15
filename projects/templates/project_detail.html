@@ -1,272 +1,462 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{{ project.title }} | Karam Fund{% endblock %}
+
+{% block CustomCss %}
+<style>
+  /* Star Rating System Styles */
+  .star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+  }
+  
+  .star-rating input[type="radio"] {
+    display: none;
+  }
+  
+  .star-label {
+    color: #e4e4e4;
+    cursor: pointer;
+    padding: 0 3px;
+    transition: color 0.2s;
+  }
+  
+  .star-label:hover,
+  .star-label:hover ~ .star-label,
+  .star-rating input[type="radio"]:checked ~ .star-label {
+    color: #ffc107;
+  }
+  
+</style>
+{% endblock %}
+
 {% block content %}
-
-<div class="container mt-5">
-  <!-- open :: project details and media -->
-  <div class="row justify-content-center">
-    <!-- open:: project details -->
-    <div class="col-md-6">
-      <h3>{{project.title}}</h3>
-      <p>{{project.description}}</p>
-      <p><strong>Category:</strong> {{project.category}}</p>
-      <p><strong>Start Campaign:</strong> {{project.campaign_start}}</p>
-      <p><strong>End Campaign:</strong> {{project.campaign_end}}</p>
-      <p><strong>Total_Target:</strong> {{project.target_amount}}</p>
-      <hr />
-      <p>
-        <strong>Rates:</strong> {{project.avg_rating}} |
-        <strong>Ratings:</strong>{{total_ratings}} review{% if total_ratings != 1 %}s{% endif %}
-      </p>
-    </div>
-    <!-- close project details -->
-
-    <!-- open:: project media slider -->
-    <div class="col-md-6">
-      <div id="highestRatedSlider"
-      class="carousel slide mb-5"
-      data-bs-ride="carousel" >
-       
-        <div class="carousel-inner">
-          {% if media %}
-            {% for image in media %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              {% if image.image and image.image.url %}
-                <img height="300px" src="{{ image.image.url }}" class="d-block w-100" alt="{{ project.title }}" />
-              {% else %}
-                <img height="300px" src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="{{ project.title }}" />
-              {% endif %}
-            </div>
-            {% endfor %}
-          {% else %}
-            <div class="carousel-item active">
-              <img height="300px" src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="Default project image" />
-            </div>
-          {% endif %}
-        </div>
-              <button class="carousel-control-prev"
-              type="button"
-              data-bs-target="#highestRatedSlider"
-              data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-           </button>
-          <button class="carousel-control-next"
-              type="button"
-              data-bs-target="#highestRatedSlider"
-              data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-      </button>
-      </div>
-    </div>
-    <!-- close:: project media slider -->
-  </div>
-  <!-- close :: project details and media -->
-
-  <!-- open :::button donation and similar projects by tags -->
-  <div class="row justify-content-center">
-    <div class="col-md-12">
-      <div>
-        <button class="btn btn-primary">
-            <a class="text-decoration-none text-white" href="{% url 'donate_to_project' project.id %}">go to donate</a>
-        </button>
-      </div>
-      <div class="container mt-5">
-        <h4 class="text-center mb-4">Similar Projects</h4>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-          {% for item in media_similar_projects|slice:":4" %}
-          {% with project=item.project media=item.media %}
-          <div class="col">
-            <div class="card h-100 shadow-sm">
-              <div class="card-img-container" style="height: 170px; overflow: hidden;">
-                {% if media and media.0 and media.0.image and media.0.image.url %}
-                  <img src="{{ media.0.image.url }}" 
-                       class="card-img-top" 
-                       alt="{{ project.title }}"
-                       style="height: 100%; object-fit: cover;">
-                {% else %}
-                  <img src="{% static 'imgs/default-image.png' %}" 
-                       class="card-img-top" 
-                       alt="{{ project.title }}"
-                       style="height: 100%; object-fit: cover;">
-                {% endif %}
-              </div>
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title fw-bold">{{ project.title }}</h5>
-                <p class="card-text text-muted small mb-2">
-                  <i class="bi bi-calendar3"></i> Created: {{ project.campaign_start|date:"M d, Y" }}
-                </p>
-                <p class="card-text text-muted">
-                  {{ project.description|truncatewords:12 }}
-                </p>
-                <div class="mt-auto">
-                  <!-- Progress Bar -->
-                  <div class="progress mb-2" style="height: 8px;">
-                    {% if project.target_amount > 0 %}
-                    <div class="progress-bar bg-success" role="progressbar" 
-                         style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
-                         aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
-                         aria-valuemin="0" aria-valuemax="100"></div>
-                    {% else %}
-                    <div class="progress-bar bg-success" role="progressbar" 
-                         style="width: 0%;" 
-                         aria-valuenow="0" 
-                         aria-valuemin="0" aria-valuemax="100"></div>
-                    {% endif %}
-                  </div>
-                  
-                  <!-- Funding Info -->
-                  <div class="d-flex justify-content-between small text-muted mb-2">
-                    <span>${{ project.current_amount|floatformat:0 }} raised</span>
-                    <span>${{ project.target_amount|floatformat:0 }} goal</span>
-                  </div>
-                  
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <small class="text-muted">
-                      <i class="bi bi-tag"></i> {{ project.category }}
-                    </small>
-                    {% if project.avg_rating %}
-                    <small class="text-warning">
-                      <i class="bi bi-star-fill"></i> {{ project.avg_rating }}
-                    </small>
-                    {% endif %}
-                  </div>
-                  <a href="{% url 'project_detail' project.id %}" class="btn btn-outline-primary w-100">Learn More</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endwith %}
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- close :::button donation and similar projects by tags -->
-
-  <!-- open:: project reviews -->
-  <div class="row d-flex justify-content-center  mt-5 mb-5">
+<div class="container py-5">
+  <!-- Project Header -->
+  <div class="row mb-4">
     <div class="col-12">
-      <h4 class=" mb-4">Project Reviews</h4>
-      <hr>
-    </div>
-    <div class="col-4 border-end">
-      <p>
-        <strong>Overall Rating:</strong> {{project.avg_rating}} ➜ {{project.avg_rating_label}}
-
-      </p>
-      <p>
-
-        <strong>based on: </strong>{{total_ratings}} reviews
-      </p>
-      <h5 class="mb-2">Rate this project:</h5>
-      <form method="post">
-        {% csrf_token %}
-        <div class="card">
-          <div class="card-body text-center">
-            <p class="text-muted">Rate us based on your experience</p>
-            <div class="d-flex justify-content-center">
-              {{ form2.rate }}
-
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">Submit Rating</button>
-      </form>
-
-
-
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">{{ project.category }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ project.title }}</li>
+        </ol>
+      </nav>
     </div>
   </div>
 
-
-</div>
-<div class="col-8">
-  <div class="comment-section">
-    <!-- New Comment Form -->
-    <div class="mb-4">
-      <div class="d-flex gap-3">
-        <div class="flex-grow-1">
-          <h6>Add Comment</h6>
-
-
-          <form method="post">
-            {% csrf_token %}
-            {{ form1.parent_comment }} {# Hidden field #}
-
-            <div class="input-group mb-3 comment-input-group"
-              style="border: 1px solid #ced4da; border-radius: 0.25rem;">
-              <span class="input-group-text"><i class="bi bi-person"></i></span>
-              {{ form1.comment_text }}
-
-
+  <!-- Main Content Area -->
+  <div class="row g-4">
+    <!-- Left Column - Project Media and Details -->
+    <div class="col-lg-8">
+      <!-- Project Media Carousel -->
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4">
+        <div id="projectMediaCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% if media %}
+              {% for image in media %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                  {% if image.image and image.image.url %}
+                    <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ project.title }}" 
+                         style="height: 400px; object-fit: cover;">
+                  {% else %}
+                    <img src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="{{ project.title }}" 
+                         style="height: 400px; object-fit: cover;">
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="carousel-item active">
+                <img src="{% static 'imgs/default-image.png' %}" class="d-block w-100" alt="Default project image" 
+                     style="height: 400px; object-fit: cover;">
+              </div>
+            {% endif %}
+          </div>
+          
+          {% if media|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#projectMediaCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#projectMediaCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+            
+            <div class="carousel-indicators position-static mt-2 mb-0">
+              {% for image in media %}
+                <button type="button" data-bs-target="#projectMediaCarousel" 
+                        data-bs-slide-to="{{ forloop.counter0 }}" 
+                        class="{% if forloop.first %}active{% endif %}" 
+                        aria-current="{% if forloop.first %}true{% else %}false{% endif %}" 
+                        aria-label="Slide {{ forloop.counter }}"></button>
+              {% endfor %}
             </div>
-
-            <div class="text-end">
-              <button type="submit" class="btn btn-primary">Post Comment</button>
-            </div>
-          </form>
-
-
+          {% endif %}
         </div>
       </div>
-    </div>
-    <!-- Comments List -->
-    <h5 class="mb-4">Comments:</h5>
-    {% for comment in main_comments %}
-    <div class="comments-list">
-      <div class="comment-box  mb-4" style="border: 1px solid #ced4da; border-radius: 0.25rem;">
-        <div class="d-flex">
-          {% comment %} TODO: Test with profile picture {% endcomment %}
-          {% if comment.user.profile_picture %}
-            <img width="80px" src="{{comment.user.profile_picture}}" alt="User Avatar" class="user-avatar" />
-          {% else %}
-          <i class="bi bi-person-circle user-avatar"
-            style="width: 80px; height: 80px; font-size: 40px; color: #6c757d; text-align: center; line-height: 80px;"
-          ></i>
-          {% endif %}
-          <div class="flex-grow-1 p-2">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h6 class="mb-0 fw-bold">{{comment.user.first_name}} {{comment.user.last_name}}</h6>
-              <span class="comment-time text-secondary">{{comment.created_at}}</span>
-            </div>
-            <p class="m-0">{{comment.comment_text}}</p>
-
+      
+      <!-- Project Details -->
+      <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+          <div class="d-sm-flex justify-content-between align-items-center mb-3">
+            <h1 class="card-title fw-bold mb-0">{{ project.title }}</h1>
+            <span class="badge bg-{{ project.is_active|yesno:"success,secondary" }} rounded-pill">
+              {{ project.is_active|yesno:"Active,Closed" }}
+            </span>
           </div>
-        </div>
-
-        <!-- Reply Section (collapsible) -->
-
-
-        {% for reply in replies %} {% if reply.parent_comment.ID == comment.ID %}
-        
-
-        <div class="collapse" id="{{comment.ID}}">
-          <div class="comment-box mt-3">
-            <div class="d-flex gap-3">
-              <img src="{{reply.user.profile_picture}}" alt="User Avatar" class="user-avatar" />
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h6 class="mb-0">{{reply.user.username}}</h6>
-                  <span class="comment-time">{{reply.created_at}}</span>
-                </div>
-                <p class="mb-2">{{reply.comment_text}}</p>
-
+          
+          <div class="d-flex flex-wrap gap-3 mb-3">
+            <div class="d-flex align-items-center text-muted">
+              <i class="bi bi-folder me-2"></i>
+              <span>{{ project.category }}</span>
+            </div>
+            <div class="d-flex align-items-center text-muted">
+              <i class="bi bi-calendar-date me-2"></i>
+              <span>Started: {{ project.campaign_start|date:"M d, Y" }}</span>
+            </div>
+            <div class="d-flex align-items-center text-muted">
+              <i class="bi bi-calendar2-check me-2"></i>
+              <span>Ends: {{ project.campaign_end|date:"M d, Y" }}</span>
+            </div>
+            <div class="d-flex align-items-center text-warning">
+              <i class="bi bi-star-fill me-2"></i>
+              <span>{{ project.avg_rating }} ({{ total_ratings }} review{% if total_ratings != 1 %}s{% endif %})</span>
+            </div>
+          </div>
+          
+          <!-- Project Progress -->
+          <div class="rounded-3 bg-light p-4 mb-4">
+            <div class="row mb-3">
+              <div class="col-sm-4 mb-3 mb-sm-0">
+                <h5 class="mb-1">${{ project.current_amount }}</h5>
+                <p class="text-muted mb-0 small">raised of ${{ project.target_amount }} goal</p>
+              </div>
+              <div class="col-sm-4 mb-3 mb-sm-0">
+                <h5 class="mb-1">{{ project.avg_rating_label }}</h5>
+                <p class="text-muted mb-0 small">project rating</p>
+              </div>
+              <div class="col-sm-4">
+                <h5 class="mb-1">{% widthratio project.current_amount project.target_amount 100 %}%</h5>
+                <p class="text-muted mb-0 small">funded</p>
               </div>
             </div>
+            
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-success" role="progressbar" 
+                   style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                   aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                   aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+          
+          <!-- Project Creator -->
+          <div class="d-flex align-items-center mb-4">
+            {% if project.creator.profile_picture %}
+              <img src="{{ project.creator.profile_picture.url }}" alt="{{ project.creator.get_full_name }}" 
+                   class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+            {% else %}
+              <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" 
+                   style="width: 48px; height: 48px;">
+                <i class="bi bi-person text-white fs-4"></i>
+              </div>
+            {% endif %}
+            <div>
+              <p class="mb-0 text-muted small">Created by</p>
+              <h6 class="mb-0">{{ project.creator.first_name }} {{ project.creator.last_name }}</h6>
+            </div>
           </div>
 
-        </div>
-        <div data-coreui-toggle="rating" data-coreui-tooltips="Very bad, Bad, Meh, Good, Very good"
-          data-coreui-value="3">
-          {% endif %} {% endfor %}
+          <!-- Project Description -->
+          <h5 class="fw-bold mb-3">About This Project</h5>
+          <div class="project-description mb-4">
+            {{ project.description|linebreaks }}
+          </div>
+          
+          {% if project.is_active %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+              <a href="{% url 'donate_to_project' project.id %}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-heart-fill me-2"></i> Donate Now
+              </a>
+            </div>
+          {% else %}
+            <div class="alert alert-secondary text-center">
+              <i class="bi bi-info-circle-fill me-2"></i>
+              This project is no longer accepting donations
+            </div>
+          {% endif %}
         </div>
       </div>
-      {% endfor %}
+      
+      <!-- Comments Section -->
+      <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 fw-bold">Comments & Feedback</h5>
+        </div>
+        <div class="card-body p-4">
+          <!-- New Comment Form -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">Add a Comment</h6>
+            <form method="post">
+              {% csrf_token %}
+              {{ form1.parent_comment }} {# Hidden field #}
+              
+              <div class="input-group mb-3">
+                {{ form1.comment_text }}
+              </div>
+              
+              <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-chat-dots me-2"></i>Post Comment
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Comments List -->
+          <h6 class="fw-bold mb-3">{{ main_comments|length }} Comment{% if main_comments|length != 1 %}s{% endif %}</h6>
+          
+          {% if main_comments %}
+            <div class="comments-list">
+              {% for comment in main_comments %}
+                <div class="comment-box p-3 mb-3 bg-light rounded">
+                  <div class="d-flex">
+                    {% if comment.user.profile_picture %}
+                      <img src="{{ comment.user.profile_picture.url }}" alt="{{ comment.user.get_full_name }}" 
+                           class="rounded-circle me-3" style="width: 48px; height: 48px; object-fit: cover;">
+                    {% else %}
+                      <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" 
+                           style="width: 48px; height: 48px;">
+                        <i class="bi bi-person text-white fs-5"></i>
+                      </div>
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0 fw-bold">{{ comment.user.first_name }} {{ comment.user.last_name }}</h6>
+                        <small class="text-muted">{{ comment.created_at|date:"M d, Y" }}</small>
+                      </div>
+                      <p class="mb-2">{{ comment.comment_text }}</p>
+                      
+                      <button class="btn btn-sm btn-link text-decoration-none p-0" 
+                              data-bs-toggle="collapse" 
+                              data-bs-target="#replies-{{ comment.ID }}" 
+                              aria-expanded="false">
+                        <i class="bi bi-chat-square-text me-1"></i>
+                        Reply
+                      </button>
+                      
+                      <!-- Replies -->
+                      <div class="collapse mt-3" id="replies-{{ comment.ID }}">
+                        {% for reply in replies %}
+                          {% if reply.parent_comment.ID == comment.ID %}
+                            <div class="d-flex mt-3 ms-4 p-3 bg-white rounded">
+                              {% if reply.user.profile_picture %}
+                                <img src="{{ reply.user.profile_picture.url }}" alt="{{ reply.user.get_full_name }}" 
+                                     class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                              {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" 
+                                     style="width: 32px; height: 32px;">
+                                  <i class="bi bi-person text-white small"></i>
+                                </div>
+                              {% endif %}
+                              
+                              <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                  <h6 class="mb-0 small fw-bold">{{ reply.user.username }}</h6>
+                                  <small class="text-muted">{{ reply.created_at|date:"M d, Y" }}</small>
+                                </div>
+                                <p class="mb-0 small">{{ reply.comment_text }}</p>
+                              </div>
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                        
+                        <!-- Reply Form -->
+                        <form method="post" class="mt-3 ms-4">
+                          {% csrf_token %}
+                          <input type="hidden" name="parent_comment" value="{{ comment.ID }}">
+                          <div class="input-group">
+                            <input type="text" name="comment_text" class="form-control form-control-sm" 
+                                   placeholder="Write a reply...">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Reply</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-chat-square-text fs-1 mb-3 d-block"></i>
+              <p>Be the first to comment on this project</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
-
-    <!-- close:: project reviews -->
+    
+    <!-- Right Column - Donation & Similar Projects -->
+    <div class="col-lg-4">
+      <!-- Rate This Project -->
+      <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 fw-bold">Rate This Project</h5>
+        </div>
+        <div class="card-body p-4 text-center">
+          <div class="mb-3">
+            <span class="fs-1 fw-bold text-warning">{{ project.avg_rating }}</span>
+            <div class="text-warning mb-2">
+              {% for i in "12345" %}
+                {% if forloop.counter <= project.avg_rating|add:"0.5"|floatformat:"0" %}
+                  <i class="bi bi-star-fill"></i>
+                {% else %}
+                  <i class="bi bi-star"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <p class="text-muted mb-0">Based on {{ total_ratings }} review{% if total_ratings != 1 %}s{% endif %}</p>
+          </div>
+          
+          <form method="post" class="mt-4">
+            {% csrf_token %}
+            <p class="fw-bold">Share your experience</p>
+            <div class="star-rating d-flex justify-content-center fs-3 text-warning mb-3">
+              <input type="radio" id="star5" name="rate" value="5" {% if form2.rate.value == '5' %}checked{% endif %}/>
+              <label for="star5" class="star-label"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" id="star4" name="rate" value="4" {% if form2.rate.value == '4' %}checked{% endif %}/>
+              <label for="star4" class="star-label"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" id="star3" name="rate" value="3" {% if form2.rate.value == '3' %}checked{% endif %}/>
+              <label for="star3" class="star-label"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" id="star2" name="rate" value="2" {% if form2.rate.value == '2' %}checked{% endif %}/>
+              <label for="star2" class="star-label"><i class="bi bi-star-fill"></i></label>
+              <input type="radio" id="star1" name="rate" value="1" {% if form2.rate.value == '1' %}checked{% endif %}/>
+              <label for="star1" class="star-label"><i class="bi bi-star-fill"></i></label>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-star me-2"></i>Submit Rating
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Donation Action Card -->
+      {% if project.is_active %}
+        <div class="card border-0 shadow-sm rounded-3 mb-4 border-primary border-top border-4">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Support This Project</h5>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Progress</span>
+                <span class="fw-bold">{% widthratio project.current_amount project.target_amount 100 %}%</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                     aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                     aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-3">
+              <div>
+                <p class="text-muted mb-0 small">Raised</p>
+                <h5 class="mb-0">${{ project.current_amount }}</h5>
+              </div>
+              <div>
+                <p class="text-muted mb-0 small">Goal</p>
+                <h5 class="mb-0">${{ project.target_amount }}</h5>
+              </div>
+            </div>
+            
+            <div class="alert alert-light border mb-3">
+              <div class="d-flex">
+                <i class="bi bi-clock text-primary me-2 fs-5"></i>
+                <div>
+                  <p class="mb-0 small">
+                    <strong>{{ project.campaign_end|timeuntil }}</strong> left to donate 
+                    <br>(ends {{ project.campaign_end|date:"F j, Y" }})
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-grid">
+              <a href="{% url 'donate_to_project' project.id %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-heart-fill me-2"></i>Donate Now
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      
+      <!-- Similar Projects -->
+      <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3">
+          <h5 class="mb-0 fw-bold">Similar Projects</h5>
+        </div>
+        <div class="card-body p-3">
+          {% if media_similar_projects %}
+            <div class="row g-3">
+              {% for item in media_similar_projects|slice:":3" %}
+                {% with similar_project=item.project similar_media=item.media %}
+                  <div class="col-12">
+                    <div class="card h-100 border">
+                      <div class="row g-0">
+                        <div class="col-4">
+                          {% if similar_media and similar_media.0 and similar_media.0.image and similar_media.0.image.url %}
+                            <img src="{{ similar_media.0.image.url }}" class="img-fluid rounded-start" alt="{{ similar_project.title }}"
+                                 style="height: 100%; object-fit: cover;">
+                          {% else %}
+                            <img src="{% static 'imgs/default-image.png' %}" class="img-fluid rounded-start" alt="{{ similar_project.title }}"
+                                 style="height: 100%; object-fit: cover;">
+                          {% endif %}
+                        </div>
+                        <div class="col-8">
+                          <div class="card-body py-2 px-3">
+                            <h6 class="card-title mb-1 text-truncate">{{ similar_project.title }}</h6>
+                            <p class="card-text small text-muted mb-1">
+                              <i class="bi bi-tag"></i> {{ similar_project.category }}
+                            </p>
+                            <div class="progress mb-1" style="height: 5px;">
+                              {% if similar_project.target_amount > 0 %}
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {% widthratio similar_project.current_amount similar_project.target_amount 100 %}%;" 
+                                     aria-valuenow="{% widthratio similar_project.current_amount similar_project.target_amount 100 %}" 
+                                     aria-valuemin="0" aria-valuemax="100"></div>
+                              {% endif %}
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-1">
+                              <small class="text-muted">{% widthratio similar_project.current_amount similar_project.target_amount 100 %}% funded</small>
+                              <a href="{% url 'project_detail' similar_project.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
+            
+            <div class="text-center mt-3">
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-grid me-1"></i>View More Projects
+              </a>
+            </div>
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <p>No similar projects found</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
 {% endblock %}
