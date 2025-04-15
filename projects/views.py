@@ -190,3 +190,11 @@ class ProjectDetailView(DetailView):
         context["form1"] = form1
         context["form2"] = form2
         return render(request, self.template_name, context)
+    
+
+def explore(req):
+    
+    projects = Project.objects.filter(is_active=True, is_deleted=False)
+
+    return render(req,'explore.html',{'projects':projects})
+    
