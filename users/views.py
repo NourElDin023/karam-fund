@@ -212,11 +212,11 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
 def profile_view(request):
     profile_user = request.user
-    profile_data = getattr(profile_user, 'userprofile', None)
+    user_profile = getattr(profile_user, 'userprofile', None)
     
     context = {
         'profile_user': profile_user,
-        'profile_data': profile_data,
+        'user_profile': user_profile,
         'member_since': profile_user.date_joined.strftime("%B %d, %Y")
     }
     return render(request, 'users/profile_detail.html', context)
