@@ -322,9 +322,16 @@
             <p class="text-muted mb-0">Based on {{ total_ratings }} review{% if total_ratings != 1 %}s{% endif %}</p>
           </div>
           
-          <form method="post" class="mt-4">
+          <form method="post" class="mt-4" id="ratingForm">
             {% csrf_token %}
             <p class="fw-bold">Share your experience</p>
+            
+            <!-- Error message for no rating selected -->
+            <div class="alert alert-danger mb-3" id="ratingError" style="display: none;">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              Please select a star rating before submitting
+            </div>
+            
             <div class="star-rating d-flex justify-content-center fs-3 text-warning mb-3">
               <input type="radio" id="star5" name="rate" value="5" {% if form2.rate.value == '5' %}checked{% endif %}/>
               <label for="star5" class="star-label"><i class="bi bi-star-fill"></i></label>
@@ -337,10 +344,47 @@
               <input type="radio" id="star1" name="rate" value="1" {% if form2.rate.value == '1' %}checked{% endif %}/>
               <label for="star1" class="star-label"><i class="bi bi-star-fill"></i></label>
             </div>
-            <button type="submit" class="btn btn-primary">
+            <button type="button" id="submitRating" class="btn btn-primary">
               <i class="bi bi-star me-2"></i>Submit Rating
             </button>
           </form>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const ratingForm = document.getElementById('ratingForm');
+              const submitButton = document.getElementById('submitRating');
+              const ratingError = document.getElementById('ratingError');
+              const ratingInputs = document.querySelectorAll('input[name="rate"]');
+              
+              submitButton.addEventListener('click', function() {
+                // Check if any rating is selected
+                let ratingSelected = false;
+                ratingInputs.forEach(input => {
+                  if (input.checked) {
+                    ratingSelected = true;
+                  }
+                });
+                
+                if (ratingSelected) {
+                  // Rating selected, hide error and submit form
+                  ratingError.style.display = 'none';
+                  ratingForm.submit();
+                } else {
+                  // No rating selected, show error message
+                  ratingError.style.display = 'block';
+                  // Scroll to error message
+                  ratingError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              });
+              
+              // Hide error message when a rating is selected
+              ratingInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                  ratingError.style.display = 'none';
+                });
+              });
+            });
+          </script>
         </div>
       </div>
       
