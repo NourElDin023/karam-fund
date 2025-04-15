@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Add Project{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white py-3">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Create a New Project
+                    </h2>
+                    <p class="mb-0 mt-2 text-white-50">Complete the form below to create your fundraising project</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate class="needs-validation">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Basic Information
+                                </h4>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">Project Title</label>
+                                {{ form.title.errors }}
+                                {{ form.title|add_class:"form-control" }}
+                                {% if form.title.help_text %}
+                                <small class="form-text text-muted">{{ form.title.help_text }}</small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">Category</label>
+                                {{ form.category.errors }}
+                                {{ form.category|add_class:"form-select" }}
+                                {% if form.category.help_text %}
+                                <small class="form-text text-muted">{{ form.category.help_text }}</small>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                                {{ form.description.errors }}
+                                {{ form.description|add_class:"form-control" }}
+                                {% if form.description.help_text %}
+                                <small class="form-text text-muted">{{ form.description.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Campaign Details Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-bullseye me-2"></i>Campaign Details
+                                </h4>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.target_amount.id_for_label }}" class="form-label fw-bold">Target Amount ($)</label>
+                                {{ form.target_amount.errors }}
+                                {{ form.target_amount|add_class:"form-control" }}
+                                {% if form.target_amount.help_text %}
+                                <small class="form-text text-muted">{{ form.target_amount.help_text }}</small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.campaign_end.id_for_label }}" class="form-label fw-bold">End Date</label>
+                                {{ form.campaign_end.errors }}
+                                {{ form.campaign_end|add_class:"form-control" }}
+                                {% if form.campaign_end.help_text %}
+                                <small class="form-text text-muted">{{ form.campaign_end.help_text }}</small>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Tags Selection -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label fw-bold">Select Tags</label>
+                                {{ form.tags.errors }}
+                                <div class="border rounded p-3">
+                                    {{ form.tags }}
+                                </div>
+                                {% if form.tags.help_text %}
+                                <small class="form-text text-muted">{{ form.tags.help_text }}</small>
+                                {% else %}
+                                <small class="form-text text-muted">Select multiple tags by holding Ctrl (or Command on Mac) while clicking</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Media Upload Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-images me-2"></i>Project Media
+                                </h4>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="images" class="form-label fw-bold">Project Images</label>
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="images" id="images" multiple accept="image/*">
+                                    <label class="input-group-text" for="images">Upload</label>
+                                </div>
+                                <small class="form-text text-muted">Upload multiple images showcasing your project (max 5 files, 5MB each)</small>
+                                <div id="imagePreview" class="row mt-3"></div>
+                            </div>
+                        </div>
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'explore' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fas fa-paper-plane me-2"></i>Create Project
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Image preview functionality
+    document.getElementById('images').addEventListener('change', function(event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        
+        const files = event.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type.startsWith('image/')) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const img = document.createElement('img');
+                img.className = 'card-img-top';
+                img.style.height = '150px';
+                img.style.objectFit = 'cover';
+                img.alt = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body p-2';
+                
+                const cardText = document.createElement('p');
+                cardText.className = 'card-text small text-truncate mb-0';
+                cardText.textContent = file.name;
+                
+                cardBody.appendChild(cardText);
+                card.appendChild(img);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                preview.appendChild(col);
+            }
+        }
+    });
+
+    // Enable Bootstrap form validation
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}
+{% endblock %}
