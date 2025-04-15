@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('activate/<uidb64>/<token>/', activate_account, name='activate'),
     path('profile/', profile_view, name='profile'),
+    path('profile/edit/', edit_profile, name='edit_profile'),
     path('logout/', logout, name='logout'),
 ]

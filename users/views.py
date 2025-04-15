@@ -22,6 +22,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 import re
 from django.views.generic import DetailView
+from .forms import UserProfileEditForm
 
 
 
@@ -230,3 +231,28 @@ def profile_view(request):
         'member_since': profile_user.date_joined.strftime("%B %d, %Y")
     }
     return render(request, 'users/profile_detail.html', context)
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        form = UserProfileEditForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            # Save form data
+            profile = form.save(commit=False)
+            
+            # Handle profile picture upload
+            if 'profile_picture' in request.FILES:
+                profile.profile_picture = request.FILES['profile_picture']
+            
+            # Save the user profile
+            profile.save()
+            
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('users:profile')
+    else:
+        # Initialize the form with the current user's data
+        form = UserProfileEditForm(instance=user)
+    
+    return render(request, 'users/edit_profile.html', {'form': form})
