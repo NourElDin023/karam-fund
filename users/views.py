@@ -200,16 +200,6 @@ def logout(request):
     messages.success(request, "You have been logged out successfully.")
     return redirect("users:login")
 
-
-class ProfileDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    template_name = 'users/profile_detail.html'
-    context_object_name = 'profile_user'
-    
-    def get_object(self):
-        return self.request.user
-
-
 def profile_view(request):
     profile_user = request.user
     user_profile = getattr(profile_user, 'userprofile', None)
