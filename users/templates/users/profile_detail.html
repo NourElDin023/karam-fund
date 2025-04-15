@@ -1,142 +1,113 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container-fluid px-0">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card shadow-lg border-0 rounded-3 overflow-hidden mb-5 animate__animated animate__fadeIn">
-          <div class="card-header bg-white py-3 border-bottom">
-            <div class="d-flex justify-content-between align-items-center">
-              <h2 class="h4 mb-0 fw-bold text-primary">
-                <i class="bi bi-person-circle me-2"></i>Profile Information
-              </h2>
-              <a href="#" class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-pencil-square"></i> Edit Profile
-              </a>
-            </div>
+{% extends 'base.html' %} {% block content %}
+<div class="row justify-content-center">
+  <div class="border-0 rounded-3 overflow-hidden mb-5">
+    <div class="py-3 border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h4 mb-0 fw-bold text-primary">
+          <i class="bi bi-person-circle me-2"></i>Profile Information
+        </h2>
+        <a href="#" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-pencil-square"></i> Edit Profile
+        </a>
+      </div>
+    </div>
+    <div class="mb-4 pb-3 border-bottom">
+      <h5 class="text-uppercase text-primary mb-3 fw-bold pt-3">
+        <i class="bi bi-person-lines-fill me-2"></i>Personal Information
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">First Name</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.first_name|default:"Not provided" }}</span
+            >
           </div>
-          
-          <div class="card-body p-4">
-            <div class="mb-4 pb-3 border-bottom">
-              <h5 class="text-uppercase text-primary mb-3 fw-bold">
-                <i class="bi bi-person-lines-fill me-2"></i>Personal Information
-              </h5>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">First Name</small>
-                    <span class="fw-semibold d-block mt-1">{{ user.first_name|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Last Name</small>
-                    <span class="fw-semibold d-block mt-1">{{ user.last_name|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Email Address</small>
-                    <span class="fw-semibold d-block mt-1">{{ user.email|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Phone Number</small>
-                    <span class="fw-semibold d-block mt-1">{{ user_profile.phone_number|default:"Not provided" }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-    
-            <div class="mb-4 pb-3 border-bottom">
-              <h5 class="text-uppercase text-primary mb-3 fw-bold">
-                <i class="bi bi-info-circle-fill me-2"></i>Additional Information
-              </h5>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Birthdate</small>
-                    <span class="fw-semibold d-block mt-1">{{ user_profile.birthdate|date:"F d, Y"|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Facebook Profile</small>
-                    <span class="fw-semibold d-block mt-1">{{ user_profile.facebook_profile|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Country</small>
-                    <span class="fw-semibold d-block mt-1">{{ user_profile.country|default:"Not provided" }}</span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="bg-light p-3 rounded-2">
-                    <small class="text-muted d-block">Member Since</small>
-                    <span class="fw-semibold d-block mt-1">{{ user.date_joined|date:"F d, Y" }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Account Settings Section -->
-            <div>
-              <h5 class="text-uppercase text-primary mb-3 fw-bold">
-                <i class="bi bi-gear-fill me-2"></i>Account Settings
-              </h5>
-              <div class="bg-light p-3 rounded-2">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <small class="text-muted d-block">Password Management</small>
-                    <span class="fw-semibold d-block mt-1">Last changed: 3 months ago</span>
-                  </div>
-                  <a href="{% url 'password_change' %}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-key-fill me-1"></i> Change Password
-                  </a>
-                </div>
-              </div>
-            </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Last Name</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.last_name|default:"Not provided" }}</span
+            >
           </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Email Address</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.email|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Phone Number</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user_profile.phone_number|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-4 pb-3 border-bottom">
+      <h5 class="text-uppercase text-primary mb-3 fw-bold">
+        <i class="bi bi-info-circle-fill me-2"></i>Additional Information
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Birthdate</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user_profile.birthdate|date:"F d, Y"|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Facebook Profile</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user_profile.facebook_profile|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Country</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user_profile.country|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Member Since</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.date_joined|date:"F d, Y" }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Account Settings Section -->
+    <div>
+      <h5 class="text-uppercase text-primary mb-3 fw-bold">
+        <i class="bi bi-gear-fill me-2"></i>Account Settings
+      </h5>
+      <div class="bg-light p-3 rounded-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <small class="text-muted d-block">Password Management</small>
+            <span class="fw-semibold d-block mt-1"
+              >Last changed: 3 months ago</span
+            >
+          </div>
+          <a href="{% url 'password_change' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-key-fill me-1"></i> Change Password
+          </a>
         </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-<style>
-  .card {
-    transition: transform 0.3s ease;
-  }
-  .card:hover {
-    transform: translateY(-5px);
-  }
-  .bg-light {
-    transition: background-color 0.3s ease;
-  }
-  .bg-light:hover {
-    background-color: #f0f4f8 !important;
-  }
-</style>
-{% endblock %}
-
-{% block extra_js %}
-
-<script>
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.querySelector(this.getAttribute('href')).scrollIntoView({
-        behavior: 'smooth'
-      });
-    });
-  });
-</script>
-{% endblock %}  
