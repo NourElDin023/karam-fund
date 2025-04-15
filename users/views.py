@@ -200,6 +200,7 @@ def logout(request):
     messages.success(request, "You have been logged out successfully.")
     return redirect("users:login")
 
+@login_required
 def profile_view(request):
     profile_user = request.user
     user_profile = getattr(profile_user, 'userprofile', None)
