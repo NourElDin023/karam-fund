@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('profile/edit/', edit_profile, name='edit_profile'),
     path('logout/', logout, name='logout'),
+    path('delete-account/', delete_account, name='delete_account'),
 ]

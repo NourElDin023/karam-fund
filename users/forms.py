@@ -42,3 +42,18 @@ class UserProfileEditForm(forms.ModelForm):
             )
         
         return phone_number
+
+class DeleteAccountForm(forms.Form):
+    """Form for confirming account deletion."""
+    
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Password",
+        required=True
+    )
+    
+    confirmation = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        label="I understand this action cannot be undone and all my projects will be transferred to a deleted user account.",
+        required=True
+    )

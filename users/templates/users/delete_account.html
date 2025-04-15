@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Account - Karam Fund{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Account</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-circle me-2"></i>Warning</h5>
+                        <p>You are about to permanently delete your account. This action <strong>cannot be undone</strong>.</p>
+                        <hr>
+                        <p class="mb-0">When you delete your account:</p>
+                        <ul>
+                            <li>All your projects will be transferred to an anonymous user</li>
+                            <li>Your donations will remain but will be anonymized</li>
+                            <li>Your profile data will be permanently deleted</li>
+                            <li>You will not be able to recover your account or data</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" class="needs-validation mt-4" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">Confirm Password</label>
+                            {{ form.password.errors }}
+                            {{ form.password }}
+                            <div class="form-text">Enter your current password to verify your identity.</div>
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            {{ form.confirmation }}
+                            <label for="{{ form.confirmation.id_for_label }}" class="form-check-label">
+                                {{ form.confirmation.label }}
+                            </label>
+                            {{ form.confirmation.errors }}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Go Back
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Delete Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
