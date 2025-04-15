@@ -18,6 +18,21 @@
           </div>
           
           <div class="card-body p-4">
+            <!-- Profile Picture Section -->
+            <div class="mb-4 pb-3 border-bottom text-center">
+              <div class="mb-3">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" class="rounded-circle img-thumbnail shadow" style="width: 150px; height: 150px; object-fit: cover;" alt="{{ user.first_name }}'s profile picture">
+                {% else %}
+                  <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow" style="width: 150px; height: 150px;">
+                    <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                  </div>
+                {% endif %}
+              </div>
+              <h4 class="mb-0 fw-bold">{{ user.first_name }} {{ user.last_name }}</h4>
+              <p class="text-muted mb-0">Member since {{ user.date_joined|date:"F d, Y" }}</p>
+            </div>
+
             <div class="mb-4 pb-3 border-bottom">
               <h5 class="text-uppercase text-primary mb-3 fw-bold">
                 <i class="bi bi-person-lines-fill me-2"></i>Personal Information
@@ -139,4 +154,4 @@
     });
   });
 </script>
-{% endblock %}  
+{% endblock %}
