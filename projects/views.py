@@ -3,12 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from django.views.generic import DetailView
-from .models import Project,projectMedia
+from .models import Project, projectMedia
 from .forms import AddNewProject
 from interactions.models import ProjectComments, ProjectRatings
 from django.db.models import Avg, Count
 from users.models import User
 from .forms import ProjectCommentsForm, ProjectRatingsForm
+
 
 # add New Project
 @login_required
@@ -23,25 +24,22 @@ def addProject(req):
             project.save()
 
             # Handle multiple image uploads
-            images = req.FILES.getlist('images')
+            images = req.FILES.getlist("images")
             if images:
                 for image in images:
-                    projectMedia.objects.create(project=project, image=image, media_type='image')
+                    projectMedia.objects.create(
+                        project=project, image=image, media_type="image"
+                    )
 
             messages.success(req, "Project added successfully!")
-            return redirect('project_details', project_id=project.id)
+            return redirect("project_detail", pk=project.id)
         else:
-            messages.error(req, "There is an error in your data. Please check for errors.")
+            messages.error(
+                req, "There is an error in your data. Please check for errors."
+            )
     else:
         form = AddNewProject()
-    return render(req, 'add_project.html', {'form': form})
-
-
-def project_details(req, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    return render(req, 'project_details.html', {'project': project})
-
-
+    return render(req, "add_project.html", {"form": form})
 
 
 # Create your views here.
