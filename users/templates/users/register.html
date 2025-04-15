@@ -18,7 +18,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="first_name" class="form-label">First Name</label>
@@ -31,6 +31,11 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" name="email" id="email" required class="form-control" value="{{ email|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_picture" class="form-label">Profile Picture</label>
+                            <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*">
+                            <small class="form-text text-muted">Optional. Upload a profile picture (JPG, PNG, GIF).</small>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>

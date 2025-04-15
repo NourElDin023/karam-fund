@@ -81,6 +81,7 @@ def register(request):
         password = request.POST.get("password").strip()
         confirm_password = request.POST.get("confirm_password").strip()
         phone_number = request.POST.get("phone_number").strip()
+        profile_picture = request.FILES.get("profile_picture")
 
         # Validate data
         errors = []
@@ -138,6 +139,11 @@ def register(request):
                 phone_number=phone_number,
                 is_active=False,  # Set user as inactive until email verification
             )
+            
+            # Add profile picture if provided
+            if profile_picture:
+                user.profile_picture = profile_picture
+                user.save()
 
             # Send activation email
             send_activation_email(user, request)
