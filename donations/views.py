@@ -4,18 +4,34 @@ from django.contrib import messages
 from projects.models import Project
 from .models import ProjectDonations
 from django.utils import timezone
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
+from django.http import Http404
 
 
 # Create your views here.
 @login_required
 def donate_to_project(request, project_id):
-    project = get_object_or_404(
-        Project, id=project_id, is_active=True, is_deleted=False
-    )
-
-    if request.method == "POST":
-        amount = request.POST.get("amount")
+    # First, try to get the project regardless of its status
+    try:
+        # Try to get the project without any filters first
+        project = Project.objects.get(id=project_id)
+        
+        # Check if the project is inactive or deleted
+        if not project.is_active or project.is_deleted:
+            context = {
+                "project": project,
+                "inactive": True,
+                "reason": "closed" if not project.is_active else "deleted"
+            }
+            return render(request, "donations/donate_inactive.html", context)
+            
+        # If we get here, project is active and not deleted
+        donation_success = False
+        donation_amount = None
+        
+        if request.method == "POST":
+            amount = request.POST.get("amount")
+            anonymous = request.POST.get("anonymous") == "on"  # Check if anonymous checkbox is checked
 
         try:
             amount = float(amount)
