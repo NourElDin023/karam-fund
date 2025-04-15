@@ -135,6 +135,63 @@
       </div>
     </div>
 
+    <!-- My Donations Section -->
+    <div class="mb-4 pb-3 border-bottom">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-uppercase text-primary fw-bold">
+          <i class="bi bi-heart-fill me-2"></i>My Donations
+        </h5>
+        <span class="badge bg-primary rounded-pill fs-6">${{ total_donation_amount|floatformat:2 }} Total</span>
+      </div>
+
+      {% if donation_count > 0 %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Project</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for donation in user_donations %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      {% if donation.project.media.first and donation.project.media.first.image %}
+                        <img src="{{ donation.project.media.first.image.url }}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ donation.project.title }}">
+                      {% else %}
+                        <img src="{% static 'imgs/default-image.png' %}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ donation.project.title }}">
+                      {% endif %}
+                      <div>
+                        <span class="fw-semibold d-block">{{ donation.project.title }}</span>
+                        <small class="text-muted">{{ donation.project.category }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-success fw-bold">${{ donation.amount|floatformat:2 }}</td>
+                  <td>{{ donation.donation_date|date:"M d, Y" }}</td>
+                  <td>
+                    <a href="{% url 'project_detail' donation.project.id %}" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-eye"></i> View Project
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          You haven't made any donations yet. 
+          <a href="{% url 'home' %}" class="alert-link">Explore projects</a> to start supporting causes you care about!
+        </div>
+      {% endif %}
+    </div>
+
     <!-- My Projects Section -->
     <div>
       <div class="d-flex justify-content-between align-items-center mb-3">
