@@ -80,7 +80,6 @@
 /* Enhanced Carousel/Slider Styles */
 #highestRatedSlider {
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     margin-bottom: 2.5rem;
     position: relative;
     overflow: hidden;
@@ -88,6 +87,7 @@
 
 #highestRatedSlider .carousel-inner {
     border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #highestRatedSlider .carousel-item .card {
@@ -110,7 +110,8 @@
 }
 
 #highestRatedSlider .card-body {
-    height: 200px; /* Keeping the same card body height */
+    height: auto; /* Changed from fixed height to auto */
+    min-height: 200px; /* Minimum height to ensure consistency */
     padding: 1.5rem;
     background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,1));
     display: flex;
@@ -140,21 +141,28 @@
 }
 
 #highestRatedSlider .carousel-indicators {
-    bottom: -10px;
+    position: relative;
+    bottom: auto;
+    margin-top: 20px;
+    margin-bottom: 0;
+    z-index: 1;
 }
 
 #highestRatedSlider .carousel-indicators button {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     margin: 0 5px;
     background-color: #ccc;
     opacity: 0.5;
+    border: none;
+    box-shadow: none;
 }
 
 #highestRatedSlider .carousel-indicators button.active {
     background-color: #007bff;
     opacity: 1;
+    box-shadow: none;
 }
 
 #highestRatedSlider .carousel-control-prev,
