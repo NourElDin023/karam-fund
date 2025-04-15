@@ -20,6 +20,7 @@ import threading
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.db import models  # Added missing import for database aggregation functions
 import re
 from django.views.generic import DetailView
 from .forms import UserProfileEditForm
@@ -234,12 +235,22 @@ def profile_view(request):
         for project in user_projects
     ]
     
+    # Get user's donations
+    from donations.models import ProjectDonations
+    user_donations = ProjectDonations.objects.filter(user=profile_user).order_by('-donation_date')
+    
+    # Calculate total donation amount
+    total_donation_amount = user_donations.aggregate(total=models.Sum('amount'))['total'] or 0
+    
     context = {
         'profile_user': profile_user,
         'user_profile': user_profile,
         'member_since': profile_user.date_joined.strftime("%B %d, %Y"),
         'user_projects': projects_with_media,
-        'project_count': user_projects.count()
+        'project_count': user_projects.count(),
+        'user_donations': user_donations,
+        'donation_count': user_donations.count(),
+        'total_donation_amount': total_donation_amount
     }
     return render(request, 'users/profile_detail.html', context)
 
