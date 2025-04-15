@@ -20,7 +20,7 @@
                                      class="card-img-top"
                                      alt="{{ project.title }}">
                             {% else %}
-                                <img src="/static/default-image.jpg"
+                                <img src="{% static 'imgs/default-image.png' %}"
                                      class="card-img-top"
                                      alt="{{ project.title }}">
                             {% endif %}
@@ -54,9 +54,15 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100">
                         <div class="card-img-container">
-                            <img src="{{ project.media.first.image.url }}"
-                                 class="card-img-top img-fluid"
-                                 alt="{{ project.title }}">
+                            {% if project.media.first and project.media.first.image %}
+                                <img src="{{ project.media.first.image.url }}"
+                                     class="card-img-top img-fluid"
+                                     alt="{{ project.title }}">
+                            {% else %}
+                                <img src="{% static 'imgs/default-image.png' %}"
+                                     class="card-img-top img-fluid"
+                                     alt="{{ project.title }}">
+                            {% endif %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold">{{ project.title }}</h5>
@@ -76,9 +82,15 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100">
                         <div class="card-img-container">
-                            <img src="{{ featured.project.media.first.image.url }}"
-                                 class="card-img-top img-fluid"
-                                 alt="{{ featured.project.title }}">
+                            {% if featured.project.media.first and featured.project.media.first.image %}
+                                <img src="{{ featured.project.media.first.image.url }}"
+                                     class="card-img-top img-fluid"
+                                     alt="{{ featured.project.title }}">
+                            {% else %}
+                                <img src="{% static 'default-image.png' %}"
+                                     class="card-img-top img-fluid"
+                                     alt="{{ featured.project.title }}">
+                            {% endif %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold">{{ featured.project.title }}</h5>
