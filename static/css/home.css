@@ -93,14 +93,15 @@
 #highestRatedSlider .carousel-item .card {
     border: none;
     border-radius: 10px;
-    height: 600px; /* Increased card height from 500px to 600px */
+    height: auto; /* Changed from fixed 600px to auto */
+    min-height: 700px; /* Added min-height to ensure enough space */
     margin: 0;
     width: 100%;
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to visible */
 }
 
 #highestRatedSlider .card-img-top {
-    height: 400px; /* Increased image height from 300px to 400px */
+    height: 400px;
     object-fit: cover;
     transition: transform 0.5s ease;
 }
@@ -110,8 +111,7 @@
 }
 
 #highestRatedSlider .card-body {
-    height: auto; /* Changed from fixed height to auto */
-    min-height: 200px; /* Minimum height to ensure consistency */
+    height: auto; /* Auto height */
     padding: 1.5rem;
     background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,1));
     display: flex;
@@ -124,15 +124,23 @@
 }
 
 #highestRatedSlider .card-text {
-    flex-grow: 1;
-    overflow: hidden;
     margin-bottom: 1rem;
+}
+
+/* Progress bar and footer styles for slider */
+#highestRatedSlider .progress {
+    margin-bottom: 0.75rem;
+}
+
+#highestRatedSlider .mt-auto {
+    margin-top: 1rem !important;
 }
 
 #highestRatedSlider .btn-primary {
     padding: 0.5rem 1.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    margin-top: 0.75rem;
 }
 
 #highestRatedSlider .btn-primary:hover {
