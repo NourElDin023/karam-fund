@@ -31,7 +31,11 @@
                         <a class="nav-link" href="{% url 'explore' %}">Explore Projects</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'add_Project' %}">Start a Campaign</a>
+                        {% if user.is_authenticated %}
+                            <a class="nav-link" href="{% url 'add_Project' %}">Start a Campaign</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'users:login' %}?next={% url 'add_Project' %}">Start a Campaign</a>
+                        {% endif %}
                     </li>
                 </ul>
 

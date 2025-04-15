@@ -192,6 +192,48 @@ class ProjectDetailView(DetailView):
         return render(request, self.template_name, context)
     
 
+@login_required
+def cancel_project(request, project_id):
+    # Get the project
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Check if user is the project creator
+    if project.creator != request.user:
+        messages.error(request, "You don't have permission to cancel this project.")
+        return redirect('project_detail', pk=project_id)
+    
+    # Check if project is already cancelled or inactive
+    if project.is_cancelled or not project.is_active:
+        messages.warning(request, "This project is already cancelled or inactive.")
+        return redirect('project_detail', pk=project_id)
+    
+    # Calculate donation percentage safely avoiding division by zero
+    from decimal import Decimal
+    donation_percentage = Decimal('0')
+    if project.target_amount > 0:
+        donation_percentage = (project.current_amount / project.target_amount) * Decimal('100')
+    
+    # Check if donations are less than 25% of the target
+    if donation_percentage >= Decimal('25'):
+        messages.error(
+            request, 
+            f"You cannot cancel this project because it has already received {donation_percentage:.1f}% of its funding target."
+        )
+        return redirect('project_detail', pk=project_id)
+    
+    # All checks passed, cancel the project
+    project.is_cancelled = True
+    project.is_active = False
+    project.save()
+    
+    messages.success(
+        request, 
+        f"Project '{project.title}' has been cancelled successfully."
+    )
+    
+    return redirect('project_detail', pk=project_id)
+
+
 def explore(req):
     
     projects = Project.objects.filter(is_active=True, is_deleted=False)

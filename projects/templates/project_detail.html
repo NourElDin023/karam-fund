@@ -175,11 +175,63 @@
             {{ project.description|linebreaks }}
           </div>
           
+          <!-- Project Actions -->
           {% if project.is_active %}
             <div class="d-grid gap-2 d-md-flex justify-content-md-center">
               <a href="{% url 'donate_to_project' project.id %}" class="btn btn-primary btn-lg px-5">
                 <i class="bi bi-heart-fill me-2"></i> Donate Now
               </a>
+              
+              <!-- Debug information (only visible to project creator) -->
+              {% if user == project.creator %}
+                {% widthratio project.current_amount project.target_amount 100 as donation_percentage %}
+                <!-- Convert to numeric for proper comparison -->
+                {% with donation_percentage_numeric=donation_percentage|floatformat:0|add:"0" %}                
+                <!-- Show cancel button if percentage is below 25% -->
+                {% if donation_percentage_numeric < 25 %}
+                    <!-- Button to cancel project (only visible to the creator if donations < 25% of target) -->
+                    <button type="button" class="btn btn-outline-danger btn-lg" data-bs-toggle="modal" data-bs-target="#cancelProjectModal">
+                      <i class="bi bi-x-circle me-2"></i> Cancel Project
+                    </button>
+                    
+                    <!-- Cancel Project Modal -->
+                    <div class="modal fade" id="cancelProjectModal" tabindex="-1" aria-labelledby="cancelProjectModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="cancelProjectModalLabel">Cancel Project</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="alert alert-warning">
+                              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                              <strong>Warning:</strong> This action cannot be undone.
+                            </div>
+                            <p>Are you sure you want to cancel this project? This will:</p>
+                            <ul>
+                              <li>Stop accepting any new donations</li>
+                              <li>Mark the project as cancelled</li>
+                              <li>Make the project inactive</li>
+                            </ul>
+                            <p class="mb-0">Your project has only received <strong>{{ donation_percentage }}%</strong> of its funding target (${{ project.current_amount }} of ${{ project.target_amount }}).</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="{% url 'cancel_project' project.id %}" class="btn btn-danger">
+                              <i class="bi bi-x-circle me-2"></i>Yes, Cancel Project
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endwith %}
+              {% endif %}
+            </div>
+          {% elif project.is_cancelled %}
+            <div class="alert alert-danger text-center">
+              <i class="bi bi-x-circle-fill me-2"></i>
+              This project has been cancelled by the creator
             </div>
           {% else %}
             <div class="alert alert-secondary text-center">
