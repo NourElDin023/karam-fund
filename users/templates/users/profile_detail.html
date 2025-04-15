@@ -59,7 +59,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Phone Number</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.phone_number|default:"Not provided" }}</span
+              >{{ user.phone_number|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -74,7 +74,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Birthdate</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.birthdate|date:"F d, Y"|default:"Not provided" }}</span
+              >{{ user.birthdate|date:"F d, Y"|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -82,7 +82,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Facebook Profile</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.facebook_profile|default:"Not provided" }}</span
+              >{{ user.facebook_profile|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -90,7 +90,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Country</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.country|default:"Not provided" }}</span
+              >{{ user.country|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -99,6 +99,15 @@
             <small class="text-muted d-block">Member Since</small>
             <span class="fw-semibold d-block mt-1"
               >{{ user.date_joined|date:"F d, Y" }}</span
+            >
+          </div>
+        </div>
+        <!-- User Bio -->
+        <div class="col-12">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Bio</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.bio|default:"Not provided" }}</span
             >
           </div>
         </div>
