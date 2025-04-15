@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import PasswordChangeForm as BasePasswordChangeForm
 import re
 
 User = get_user_model()
@@ -57,3 +58,12 @@ class DeleteAccountForm(forms.Form):
         label="I understand this action cannot be undone and all my projects will be transferred to a deleted user account.",
         required=True
     )
+
+class PasswordChangeForm(BasePasswordChangeForm):
+    """Custom password change form with improved styling."""
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add Bootstrap classes to form fields
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

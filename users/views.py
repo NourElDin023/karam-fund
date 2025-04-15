@@ -4,7 +4,8 @@ from django.contrib.auth import (
     authenticate, 
     login as auth_login, 
     logout as auth_logout,
-    get_user_model
+    get_user_model,
+    update_session_auth_hash
 )
 
 User = get_user_model()
@@ -23,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models  # Added missing import for database aggregation functions
 import re
 from django.views.generic import DetailView
-from .forms import UserProfileEditForm, DeleteAccountForm
+from .forms import UserProfileEditForm, DeleteAccountForm, PasswordChangeForm
 
 
 
@@ -315,3 +316,25 @@ def delete_account(request):
         form = DeleteAccountForm()
     
     return render(request, 'users/delete_account.html', {'form': form})
+
+@login_required
+def change_password(request):
+    """Custom password change view with better styling."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Important: update the session to prevent the user from being logged out
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('users:password_change_done')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'registration/password_change_form.html', {'form': form})
+
+@login_required
+def password_change_done(request):
+    """Show success page after password change."""
+    return render(request, 'registration/password_change_done.html')
