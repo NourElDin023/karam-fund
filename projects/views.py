@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 
 from django.views.generic import DetailView
 from .models import Project, projectMedia
@@ -10,6 +11,33 @@ from django.db.models import Avg, Count
 from users.models import User
 from .forms import ProjectCommentsForm, ProjectRatingsForm
 
+# Project search view
+def search_projects(request):
+    query = request.GET.get('q', '')
+    
+    if query:
+        # Search in title, description and tags - fixing the tag lookup
+        projects = Project.objects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(tags__tag__name__icontains=query)  # Fixed: search on tag name not the tag object
+        ).distinct()
+        
+        # Add media to each project for display
+        projects_with_media = [
+            {"project": proj, "media": proj.media.filter(media_type="image").first()}
+            for proj in projects
+        ]
+    else:
+        projects_with_media = []
+    
+    context = {
+        'query': query,
+        'projects': projects_with_media,
+        'count': len(projects_with_media)
+    }
+    
+    return render(request, 'search_results.html', context)
 
 # add New Project
 @login_required

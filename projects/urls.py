@@ -5,4 +5,5 @@ from .views import ProjectDetailView
 urlpatterns = [
     path('add/',views.addProject,name='add_Project'),
     path("<int:pk>/", ProjectDetailView.as_view(), name="project_detail"),
+    path("search/", views.search_projects, name="search_projects"),
 ]

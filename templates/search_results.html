@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search Results - {{ query }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Search Results for "{{ query }}"</h2>
+    
+    {% if count == 0 %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No projects found matching "{{ query }}".
+        </div>
+        <p class="mt-4">Try searching with different keywords or <a href="{% url 'home' %}">explore all projects</a>.</p>
+    {% else %}
+        <p class="mb-4">Found {{ count }} project{% if count != 1 %}s{% endif %} matching your search.</p>
+        
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for item in projects %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-img-container" style="height: 200px; overflow: hidden;">
+                        {% if item.media and item.media.image and item.media.image.url %}
+                            <img src="{{ item.media.image.url }}" class="card-img-top" alt="{{ item.project.title }}" style="height: 100%; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'imgs/default-image.png' %}" class="card-img-top" alt="{{ item.project.title }}" style="height: 100%; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">{{ item.project.title }}</h5>
+                        <p class="card-text text-muted">{{ item.project.description|truncatewords:20 }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-tag"></i> {{ item.project.category }}
+                                </small>
+                                {% if item.project.avg_rating %}
+                                <small class="text-warning">
+                                    <i class="bi bi-star-fill"></i> {{ item.project.avg_rating }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'project_detail' item.project.id %}" class="btn btn-primary w-100 mt-3">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
