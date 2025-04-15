@@ -1,4 +1,4 @@
- /* Custom CSS for consistent card heights and image handling */
+/* Custom CSS for consistent card heights and image handling */
  .card {
      transition: transform 0.2s;
      /* Optional hover effect */
@@ -34,3 +34,100 @@
      height: calc(100% - 200px);
      /* Calculate remaining height */
  }
+
+/* Enhanced Carousel/Slider Styles */
+#highestRatedSlider {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+#highestRatedSlider .carousel-inner {
+    border-radius: 10px;
+}
+
+#highestRatedSlider .carousel-item .card {
+    border: none;
+    border-radius: 10px;
+    height: 600px; /* Increased card height from 500px to 600px */
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+#highestRatedSlider .card-img-top {
+    height: 400px; /* Increased image height from 300px to 400px */
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+#highestRatedSlider .carousel-item:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+#highestRatedSlider .card-body {
+    height: 200px; /* Keeping the same card body height */
+    padding: 1.5rem;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,1));
+    display: flex;
+    flex-direction: column;
+}
+
+#highestRatedSlider .card-title {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+#highestRatedSlider .card-text {
+    flex-grow: 1;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+#highestRatedSlider .btn-primary {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#highestRatedSlider .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+#highestRatedSlider .carousel-indicators {
+    bottom: -10px;
+}
+
+#highestRatedSlider .carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    background-color: #ccc;
+    opacity: 0.5;
+}
+
+#highestRatedSlider .carousel-indicators button.active {
+    background-color: #007bff;
+    opacity: 1;
+}
+
+#highestRatedSlider .carousel-control-prev,
+#highestRatedSlider .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    top: 45%;
+    opacity: 0.7;
+    margin: 0 15px;
+}
+
+#highestRatedSlider .carousel-control-prev:hover,
+#highestRatedSlider .carousel-control-next:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}

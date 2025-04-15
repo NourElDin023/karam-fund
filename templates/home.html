@@ -10,11 +10,24 @@
         <h2 class="mb-4">Top 5 Highest Rated Projects</h2>
         <div id="highestRatedSlider"
              class="carousel slide mb-5"
-             data-bs-ride="carousel">
+             data-bs-ride="carousel"
+             data-bs-interval="5000"
+             data-bs-touch="true">
+            <!-- Carousel Indicators -->
+            <div class="carousel-indicators">
+                {% for project in highest_rated_projects %}
+                    <button type="button" 
+                            data-bs-target="#highestRatedSlider" 
+                            data-bs-slide-to="{{ forloop.counter0 }}" 
+                            {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                            aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            
             <div class="carousel-inner">
                 {% for project in highest_rated_projects %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <a href="/projects/{{ project.id }}/" class="card">
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+                        <div class="card">
                             {% if project.media.first and project.media.first.image %}
                                 <img src="{{ project.media.first.image.url }}"
                                      class="card-img-top"
@@ -27,8 +40,11 @@
                             <div class="card-body">
                                 <h3 class="card-title">{{ project.title }}</h3>
                                 <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                                <div class="text-end mt-3">
+                                    <a href="/projects/{{ project.id }}/" class="btn btn-primary">Learn More</a>
+                                </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
@@ -87,7 +103,7 @@
                                      class="card-img-top img-fluid"
                                      alt="{{ featured.project.title }}">
                             {% else %}
-                                <img src="{% static 'default-image.png' %}"
+                                <img src="{% static 'imgs/default-image.png' %}"
                                      class="card-img-top img-fluid"
                                      alt="{{ featured.project.title }}">
                             {% endif %}
