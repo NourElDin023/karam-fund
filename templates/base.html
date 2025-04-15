@@ -37,9 +37,9 @@
 
                 <!-- Right side search + dropdown -->
                 <div class="d-flex align-items-center gap-3">
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search projects..."
-                            aria-label="Search">
+                    <form class="d-flex" role="search" action="{% url 'search_projects' %}" method="GET">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Search projects..."
+                            aria-label="Search" required>
                         <button class="btn btn-outline-light" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -50,7 +50,7 @@
                         <!-- Menu for logged-in users -->
                         <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                            <i class="bi bi-person-circle"></i> {{ user.first_name }} {{ user.last_name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'users:profile' %}"><i class="bi bi-person"></i> Profile</a></li>

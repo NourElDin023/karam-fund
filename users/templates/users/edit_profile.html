@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Profile Picture Section -->
+                        <div class="mb-4 pb-3 border-bottom text-center">
+                            <div class="mb-3">
+                                {% if user.profile_picture %}
+                                    <img id="profile-preview" src="{{ user.profile_picture.url }}" class="rounded-circle img-thumbnail shadow" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile picture">
+                                {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow" style="width: 150px; height: 150px;">
+                                  <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Change Profile Picture</label>
+                                {{ form.profile_picture.errors }}
+                                <input type="file" class="form-control" id="{{ form.profile_picture.id_for_label }}" name="{{ form.profile_picture.html_name }}" accept="image/*">
+                                <small class="form-text text-muted">Upload a new profile picture (optional)</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Basic Information Section -->
+                        <h5 class="text-uppercase text-primary mb-3 fw-bold pt-3">
+                            <i class="bi bi-person-lines-fill me-2"></i>Personal Information
+                        </h5>
+                        
+                        <div class="row g-3 mb-4">
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                {{ form.first_name.errors }}
+                                <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.first_name.id_for_label }}" 
+                                       name="{{ form.first_name.html_name }}" 
+                                       value="{{ form.first_name.value|default:'' }}" 
+                                       required>
+                            </div>
+                            
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                {{ form.last_name.errors }}
+                                <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.last_name.id_for_label }}" 
+                                       name="{{ form.last_name.html_name }}" 
+                                       value="{{ form.last_name.value|default:'' }}" 
+                                       required>
+                            </div>
+                            
+                            <!-- Email (Read Only) -->
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" value="{{ user.email }}" readonly disabled>
+                                <small class="form-text text-muted">Email cannot be changed</small>
+                            </div>
+                            
+                            <!-- Phone Number -->
+                            <div class="col-md-6">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+                                {{ form.phone_number.errors }}
+                                <input type="text" class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.phone_number.id_for_label }}" 
+                                       name="{{ form.phone_number.html_name }}" 
+                                       value="{{ form.phone_number.value|default:'' }}" 
+                                       placeholder="e.g., 01012345678"
+                                       required>
+                                <small class="form-text text-muted">Egyptian phone number format (01[0/1/2/5] + 8 digits)</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information Section -->
+                        <h5 class="text-uppercase text-primary mb-3 fw-bold">
+                            <i class="bi bi-info-circle-fill me-2"></i>Additional Information
+                        </h5>
+                        
+                        <div class="row g-3 mb-4">
+                            <!-- Birthdate -->
+                            <div class="col-md-6">
+                                <label for="{{ form.birthdate.id_for_label }}" class="form-label">Birthdate</label>
+                                {{ form.birthdate.errors }}
+                                <input type="date" class="form-control {% if form.birthdate.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.birthdate.id_for_label }}" 
+                                       name="{{ form.birthdate.html_name }}" 
+                                       value="{{ form.birthdate.value|date:'Y-m-d'|default:'' }}">
+                            </div>
+                            
+                            <!-- Country -->
+                            <div class="col-md-6">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                                {{ form.country.errors }}
+                                <input type="text" class="form-control {% if form.country.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.country.id_for_label }}" 
+                                       name="{{ form.country.html_name }}" 
+                                       value="{{ form.country.value|default:'' }}">
+                            </div>
+                            
+                            <!-- Facebook Profile -->
+                            <div class="col-md-6">
+                                <label for="{{ form.facebook_profile.id_for_label }}" class="form-label">Facebook Profile</label>
+                                {{ form.facebook_profile.errors }}
+                                <input type="url" class="form-control {% if form.facebook_profile.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.facebook_profile.id_for_label }}" 
+                                       name="{{ form.facebook_profile.html_name }}" 
+                                       value="{{ form.facebook_profile.value|default:'' }}"
+                                       placeholder="https://facebook.com/yourusername">
+                            </div>
+                            
+                            <!-- Bio -->
+                            <div class="col-12">
+                                <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+                                {{ form.bio.errors }}
+                                <textarea class="form-control {% if form.bio.errors %}is-invalid{% endif %}" 
+                                          id="{{ form.bio.id_for_label }}" 
+                                          name="{{ form.bio.html_name }}" 
+                                          rows="4">{{ form.bio.value|default:'' }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview profile picture before upload
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+        const imagePreview = document.getElementById('profile-preview');
+        
+        if (fileInput && imagePreview) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

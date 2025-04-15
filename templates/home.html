@@ -7,47 +7,74 @@
 {% block content %}
     <div class="container mt-5">
         <!-- Slider for Highest Rated Projects -->
-        <h2 class="mb-4">Top 5 Highest Rated Projects</h2>
+        <h2 class="section-heading"><i class="bi bi-star-fill"></i> Top 5 Highest Rated Projects</h2>
         <div id="highestRatedSlider"
              class="carousel slide mb-5"
              data-bs-ride="carousel"
              data-bs-interval="5000"
              data-bs-touch="true">
-            <!-- Carousel Indicators -->
-            <div class="carousel-indicators">
-                {% for project in highest_rated_projects %}
-                    <button type="button" 
-                            data-bs-target="#highestRatedSlider" 
-                            data-bs-slide-to="{{ forloop.counter0 }}" 
-                            {% if forloop.first %}class="active" aria-current="true"{% endif %} 
-                            aria-label="Slide {{ forloop.counter }}"></button>
-                {% endfor %}
-            </div>
             
             <div class="carousel-inner">
                 {% for project in highest_rated_projects %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
-                        <div class="card">
+                        <div class="card shadow-sm">
                             {% if project.media.first and project.media.first.image %}
                                 <img src="{{ project.media.first.image.url }}"
                                      class="card-img-top"
-                                     alt="{{ project.title }}">
+                                     alt="{{ project.title }}"
+                                     style="height: 400px; object-fit: cover;">
                             {% else %}
                                 <img src="{% static 'imgs/default-image.png' %}"
                                      class="card-img-top"
-                                     alt="{{ project.title }}">
+                                     alt="{{ project.title }}"
+                                     style="height: 400px; object-fit: cover;">
                             {% endif %}
-                            <div class="card-body">
-                                <h3 class="card-title">{{ project.title }}</h3>
-                                <p class="card-text">{{ project.description|truncatewords:20 }}</p>
-                                <div class="text-end mt-3">
-                                    <a href="/projects/{{ project.id }}/" class="btn btn-primary">Learn More</a>
+                            <div class="card-body d-flex flex-column">
+                                <h3 class="card-title fw-bold">{{ project.title }}</h3>
+                                <p class="card-text text-muted small mb-2">
+                                    <i class="bi bi-calendar3"></i> Created: {{ project.campaign_start|date:"M d, Y" }}
+                                </p>
+                                <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
+                                <div class="mt-auto">
+                                    <!-- Progress Bar -->
+                                    <div class="progress mb-2" style="height: 8px;">
+                                        {% if project.target_amount > 0 %}
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                                             aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                        {% else %}
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: 0%;" 
+                                             aria-valuenow="0" 
+                                             aria-valuemin="0" aria-valuemax="100"></div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Funding Info -->
+                                    <div class="d-flex justify-content-between small text-muted mb-2">
+                                        <span>${{ project.current_amount|floatformat:0 }} raised</span>
+                                        <span>${{ project.target_amount|floatformat:0 }} goal</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <small class="text-muted">
+                                            <i class="bi bi-tag"></i> {{ project.category }}
+                                        </small>
+                                        {% if project.avg_rating %}
+                                        <small class="text-warning">
+                                            <i class="bi bi-star-fill"></i> {{ project.avg_rating }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                    <a href="/projects/{{ project.id }}/" class="btn btn-primary w-100">Learn More</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            
             <button class="carousel-control-prev"
                     type="button"
                     data-bs-target="#highestRatedSlider"
@@ -62,29 +89,76 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
+            
+            <!-- Carousel Indicators moved below -->
+            <div class="carousel-indicators">
+                {% for project in highest_rated_projects %}
+                    <button type="button" 
+                            data-bs-target="#highestRatedSlider" 
+                            data-bs-slide-to="{{ forloop.counter0 }}" 
+                            {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                            aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
         </div>
         <!-- Latest Projects -->
-        <h2 class="mb-4 text-center">Latest Projects</h2>
-        <div class="row">
+        <h2 class="section-heading"><i class="bi bi-clock-history"></i> Latest Projects</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for project in latest_projects %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-img-container">
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-img-container" style="height: 200px; overflow: hidden;">
                             {% if project.media.first and project.media.first.image %}
-                                <img src="{{ project.media.first.image.url }}"
-                                     class="card-img-top img-fluid"
-                                     alt="{{ project.title }}">
+                                <img src="{{ project.media.first.image.url }}" 
+                                     class="card-img-top"
+                                     alt="{{ project.title }}"
+                                     style="height: 100%; object-fit: cover;">
                             {% else %}
-                                <img src="{% static 'imgs/default-image.png' %}"
-                                     class="card-img-top img-fluid"
-                                     alt="{{ project.title }}">
+                                <img src="{% static 'imgs/default-image.png' %}" 
+                                     class="card-img-top"
+                                     alt="{{ project.title }}"
+                                     style="height: 100%; object-fit: cover;">
                             {% endif %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold">{{ project.title }}</h5>
-                            <p class="card-text">{{ project.description|truncatechars:85 }}</p>
-                            <div class="mt-auto text-end">
-                                <a href="/projects/{{ project.id }}/" class="btn btn-primary">Learn More</a>
+                            <p class="card-text text-muted small mb-2">
+                                <i class="bi bi-calendar3"></i> Created: {{ project.campaign_start|date:"M d, Y" }}
+                            </p>
+                            <p class="card-text text-muted">{{ project.description|truncatechars:85 }}</p>
+                            <div class="mt-auto">
+                                <!-- Progress Bar -->
+                                <div class="progress mb-2" style="height: 8px;">
+                                    {% if project.target_amount > 0 %}
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                                         aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                    {% else %}
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: 0%;" 
+                                         aria-valuenow="0" 
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Funding Info -->
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>${{ project.current_amount|floatformat:0 }} raised</span>
+                                    <span>${{ project.target_amount|floatformat:0 }} goal</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">
+                                        <i class="bi bi-tag"></i> {{ project.category }}
+                                    </small>
+                                    {% if project.avg_rating %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-star-fill"></i> {{ project.avg_rating }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                                <a href="/projects/{{ project.id }}/" class="btn btn-primary w-100">Learn More</a>
                             </div>
                         </div>
                     </div>
@@ -92,27 +166,63 @@
             {% endfor %}
         </div>
         <!-- Featured Projects -->
-        <h2 class="mb-4 text-center">Featured Projects</h2>
-        <div class="row">
+        <h2 class="section-heading"><i class="bi bi-award"></i> Featured Projects</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for featured in featured_projects %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-img-container">
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-img-container" style="height: 200px; overflow: hidden;">
                             {% if featured.project.media.first and featured.project.media.first.image %}
-                                <img src="{{ featured.project.media.first.image.url }}"
-                                     class="card-img-top img-fluid"
-                                     alt="{{ featured.project.title }}">
+                                <img src="{{ featured.project.media.first.image.url }}" 
+                                     class="card-img-top"
+                                     alt="{{ featured.project.title }}"
+                                     style="height: 100%; object-fit: cover;">
                             {% else %}
-                                <img src="{% static 'imgs/default-image.png' %}"
-                                     class="card-img-top img-fluid"
-                                     alt="{{ featured.project.title }}">
+                                <img src="{% static 'imgs/default-image.png' %}" 
+                                     class="card-img-top"
+                                     alt="{{ featured.project.title }}"
+                                     style="height: 100%; object-fit: cover;">
                             {% endif %}
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold">{{ featured.project.title }}</h5>
-                            <p class="card-text">{{ featured.project.description|truncatechars:85 }}</p>
-                            <div class="mt-auto text-end">
-                                <a href="/projects/{{ featured.project.id }}/" class="btn btn-primary">Learn More</a>
+                            <p class="card-text text-muted small mb-2">
+                                <i class="bi bi-calendar3"></i> Created: {{ featured.project.campaign_start|date:"M d, Y" }}
+                            </p>
+                            <p class="card-text text-muted">{{ featured.project.description|truncatechars:85 }}</p>
+                            <div class="mt-auto">
+                                <!-- Progress Bar -->
+                                <div class="progress mb-2" style="height: 8px;">
+                                    {% if featured.project.target_amount > 0 %}
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {% widthratio featured.project.current_amount featured.project.target_amount 100 %}%;" 
+                                         aria-valuenow="{% widthratio featured.project.current_amount featured.project.target_amount 100 %}" 
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                    {% else %}
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: 0%;" 
+                                         aria-valuenow="0" 
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Funding Info -->
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>${{ featured.project.current_amount|floatformat:0 }} raised</span>
+                                    <span>${{ featured.project.target_amount|floatformat:0 }} goal</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">
+                                        <i class="bi bi-tag"></i> {{ featured.project.category }}
+                                    </small>
+                                    {% if featured.project.avg_rating %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-star-fill"></i> {{ featured.project.avg_rating }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                                <a href="/projects/{{ featured.project.id }}/" class="btn btn-primary w-100">Learn More</a>
                             </div>
                         </div>
                     </div>
@@ -120,10 +230,10 @@
             {% endfor %}
         </div>
         <!-- Categories -->
-        <h2 class="mb-4">Browse Categories</h2>
+        <h2 class="section-heading"><i class="bi bi-grid-3x3-gap"></i> Browse Categories</h2>
         <div class="d-flex flex-wrap gap-2 mb-5">
             {% for category in categories %}
-                <a href="/projects/?category={{ category.id }}"
+                <a href="{% url 'projects_by_category' category.id %}"
                    class="btn btn-outline-primary rounded-pill px-3">
                     {{ category.name }}
                     <span class="badge bg-primary ms-1">{{ category.project_count }}</span>

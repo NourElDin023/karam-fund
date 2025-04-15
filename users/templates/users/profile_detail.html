@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <div class="row justify-content-center">
   <div class="border-0 rounded-3 overflow-hidden mb-5">
     <div class="py-3 border-bottom">
@@ -6,7 +8,7 @@
         <h2 class="h4 mb-0 fw-bold text-primary">
           <i class="bi bi-person-circle me-2"></i>Profile Information
         </h2>
-        <a href="#" class="btn btn-sm btn-outline-primary">
+        <a href="{% url 'users:edit_profile' %}" class="btn btn-sm btn-outline-primary">
           <i class="bi bi-pencil-square"></i> Edit Profile
         </a>
       </div>
@@ -59,7 +61,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Phone Number</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.phone_number|default:"Not provided" }}</span
+              >{{ user.phone_number|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -74,7 +76,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Birthdate</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.birthdate|date:"F d, Y"|default:"Not provided" }}</span
+              >{{ user.birthdate|date:"F d, Y"|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -82,7 +84,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Facebook Profile</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.facebook_profile|default:"Not provided" }}</span
+              >{{ user.facebook_profile|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -90,7 +92,7 @@
           <div class="bg-light p-3 rounded-2">
             <small class="text-muted d-block">Country</small>
             <span class="fw-semibold d-block mt-1"
-              >{{ user_profile.country|default:"Not provided" }}</span
+              >{{ user.country|default:"Not provided" }}</span
             >
           </div>
         </div>
@@ -102,10 +104,19 @@
             >
           </div>
         </div>
+        <!-- User Bio -->
+        <div class="col-12">
+          <div class="bg-light p-3 rounded-2">
+            <small class="text-muted d-block">Bio</small>
+            <span class="fw-semibold d-block mt-1"
+              >{{ user.bio|default:"Not provided" }}</span
+            >
+          </div>
+        </div>
       </div>
     </div>
     <!-- Account Settings Section -->
-    <div>
+    <div class="mb-4 pb-3 border-bottom">
       <h5 class="text-uppercase text-primary mb-3 fw-bold">
         <i class="bi bi-gear-fill me-2"></i>Account Settings
       </h5>
@@ -122,6 +133,74 @@
           </a>
         </div>
       </div>
+    </div>
+
+    <!-- My Projects Section -->
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-uppercase text-primary fw-bold">
+          <i class="bi bi-folder-fill me-2"></i>My Projects
+        </h5>
+        <a href="{% url 'add_Project' %}" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-plus-circle me-1"></i> Start New Project
+        </a>
+      </div>
+
+      {% if project_count > 0 %}
+        <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+          {% for item in user_projects %}
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-img-container" style="height: 150px; overflow: hidden;">
+                  {% if item.media and item.media.image and item.media.image.url %}
+                    <img src="{{ item.media.image.url }}" class="card-img-top" alt="{{ item.project.title }}" style="height: 100%; object-fit: cover;">
+                  {% else %}
+                    <img src="{% static 'imgs/default-image.png' %}" class="card-img-top" alt="{{ item.project.title }}" style="height: 100%; object-fit: cover;">
+                  {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title fw-bold">{{ item.project.title }}</h5>
+                  <p class="card-text text-muted small mb-2">
+                    <i class="bi bi-calendar3"></i> Created: {{ item.project.campaign_start|date:"M d, Y" }}
+                  </p>
+                  <div class="progress mb-2" style="height: 8px;">
+                    {% if item.project.target_amount > 0 %}
+                      {% with percentage=item.project.current_amount|floatformat:0 %}
+                      <div class="progress-bar bg-success" role="progressbar" 
+                           style="width: {% widthratio item.project.current_amount item.project.target_amount 100 %}%" 
+                           aria-valuenow="{% widthratio item.project.current_amount item.project.target_amount 100 %}" 
+                           aria-valuemin="0" aria-valuemax="100"></div>
+                      {% endwith %}
+                    {% else %}
+                      <div class="progress-bar bg-success" role="progressbar" 
+                           style="width: 0%" 
+                           aria-valuenow="0" 
+                           aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endif %}
+                  </div>
+                  <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>${{ item.project.current_amount|floatformat:0 }} raised</span>
+                    <span>${{ item.project.target_amount|floatformat:0 }} goal</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <small class="text-{% if item.project.is_active %}success{% else %}danger{% endif %}">
+                      <i class="bi bi-circle-fill me-1"></i>
+                      {% if item.project.is_active %}Active{% else %}Closed{% endif %}
+                    </small>
+                    <a href="{% url 'project_detail' item.project.id %}" class="btn btn-sm btn-primary">View Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          You haven't created any projects yet. 
+          <a href="{% url 'add_Project' %}" class="alert-link">Start your first project</a> to begin fundraising!
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>

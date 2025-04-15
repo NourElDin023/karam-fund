@@ -80,17 +80,61 @@
           {% with project=item.project media=item.media %}
           <div class="col">
             <div class="card h-100 shadow-sm">
-              {% if media and media.0 and media.0.image and media.0.image.url %}
-              <img height="170px" src="{{ media.0.image.url }}" class="card-img-top" alt="{{ project.title }}" />
-              {% else %}
-              <img height="170px" src="{% static 'imgs/default-image.png' %}" class="card-img-top" alt="{{ project.title }}" />
-              {% endif %}
+              <div class="card-img-container" style="height: 170px; overflow: hidden;">
+                {% if media and media.0 and media.0.image and media.0.image.url %}
+                  <img src="{{ media.0.image.url }}" 
+                       class="card-img-top" 
+                       alt="{{ project.title }}"
+                       style="height: 100%; object-fit: cover;">
+                {% else %}
+                  <img src="{% static 'imgs/default-image.png' %}" 
+                       class="card-img-top" 
+                       alt="{{ project.title }}"
+                       style="height: 100%; object-fit: cover;">
+                {% endif %}
+              </div>
               <div class="card-body d-flex flex-column">
-                <h5 style="height: 60px;" class="card-title">{{ project.title }}</h5>
-                <p class="card-text text-muted">
-                  {{ project.description|truncatewords:15 }}
+                <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                <p class="card-text text-muted small mb-2">
+                  <i class="bi bi-calendar3"></i> Created: {{ project.campaign_start|date:"M d, Y" }}
                 </p>
-                <a href="{% url 'project_detail' project.id %}" class="btn btn-outline-primary mt-auto">Learn More</a>
+                <p class="card-text text-muted">
+                  {{ project.description|truncatewords:12 }}
+                </p>
+                <div class="mt-auto">
+                  <!-- Progress Bar -->
+                  <div class="progress mb-2" style="height: 8px;">
+                    {% if project.target_amount > 0 %}
+                    <div class="progress-bar bg-success" role="progressbar" 
+                         style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                         aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                    {% else %}
+                    <div class="progress-bar bg-success" role="progressbar" 
+                         style="width: 0%;" 
+                         aria-valuenow="0" 
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Funding Info -->
+                  <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>${{ project.current_amount|floatformat:0 }} raised</span>
+                    <span>${{ project.target_amount|floatformat:0 }} goal</span>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">
+                      <i class="bi bi-tag"></i> {{ project.category }}
+                    </small>
+                    {% if project.avg_rating %}
+                    <small class="text-warning">
+                      <i class="bi bi-star-fill"></i> {{ project.avg_rating }}
+                    </small>
+                    {% endif %}
+                  </div>
+                  <a href="{% url 'project_detail' project.id %}" class="btn btn-outline-primary w-100">Learn More</a>
+                </div>
               </div>
             </div>
           </div>

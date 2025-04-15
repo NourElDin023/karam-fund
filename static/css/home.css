@@ -35,10 +35,51 @@
      /* Calculate remaining height */
  }
 
+/* Section Heading Styles */
+.section-heading {
+    position: relative;
+    padding-bottom: 15px;
+    margin-top: 50px;
+    margin-bottom: 35px;
+    font-weight: 700;
+    text-align: center;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.section-heading i {
+    color: #007bff;
+    font-size: 1.8rem;
+}
+
+.section-heading:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    border-radius: 2px;
+}
+
+.section-heading.left-aligned {
+    text-align: left;
+    justify-content: flex-start;
+}
+
+.section-heading.left-aligned:after {
+    left: 0;
+    transform: none;
+}
+
 /* Enhanced Carousel/Slider Styles */
 #highestRatedSlider {
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     margin-bottom: 2.5rem;
     position: relative;
     overflow: hidden;
@@ -46,19 +87,21 @@
 
 #highestRatedSlider .carousel-inner {
     border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #highestRatedSlider .carousel-item .card {
     border: none;
     border-radius: 10px;
-    height: 600px; /* Increased card height from 500px to 600px */
+    height: auto; /* Changed from fixed 600px to auto */
+    min-height: 700px; /* Added min-height to ensure enough space */
     margin: 0;
     width: 100%;
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to visible */
 }
 
 #highestRatedSlider .card-img-top {
-    height: 400px; /* Increased image height from 300px to 400px */
+    height: 400px;
     object-fit: cover;
     transition: transform 0.5s ease;
 }
@@ -68,7 +111,7 @@
 }
 
 #highestRatedSlider .card-body {
-    height: 200px; /* Keeping the same card body height */
+    height: auto; /* Auto height */
     padding: 1.5rem;
     background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,1));
     display: flex;
@@ -81,15 +124,23 @@
 }
 
 #highestRatedSlider .card-text {
-    flex-grow: 1;
-    overflow: hidden;
     margin-bottom: 1rem;
+}
+
+/* Progress bar and footer styles for slider */
+#highestRatedSlider .progress {
+    margin-bottom: 0.75rem;
+}
+
+#highestRatedSlider .mt-auto {
+    margin-top: 1rem !important;
 }
 
 #highestRatedSlider .btn-primary {
     padding: 0.5rem 1.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    margin-top: 0.75rem;
 }
 
 #highestRatedSlider .btn-primary:hover {
@@ -98,21 +149,28 @@
 }
 
 #highestRatedSlider .carousel-indicators {
-    bottom: -10px;
+    position: relative;
+    bottom: auto;
+    margin-top: 20px;
+    margin-bottom: 0;
+    z-index: 1;
 }
 
 #highestRatedSlider .carousel-indicators button {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     margin: 0 5px;
     background-color: #ccc;
     opacity: 0.5;
+    border: none;
+    box-shadow: none;
 }
 
 #highestRatedSlider .carousel-indicators button.active {
     background-color: #007bff;
     opacity: 1;
+    box-shadow: none;
 }
 
 #highestRatedSlider .carousel-control-prev,
