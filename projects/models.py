@@ -63,7 +63,8 @@ class Project(models.Model):
         return self.title
 
     def cancel_project(self):
-        if self.current_amount < (0.25 * self.target_amount):
+        from decimal import Decimal
+        if self.current_amount < (Decimal('0.25') * self.target_amount):
             self.is_cancelled = True
             self.save()
 
