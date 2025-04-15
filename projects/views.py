@@ -86,7 +86,7 @@ def addProject(req):
             )
     else:
         form = AddNewProject()
-    return render(req, "add_project.html", {"form": form})
+    return render(req, "projects/add_project.html", {"form": form})
 
 
 # Create your views here.
@@ -197,4 +197,4 @@ def explore(req):
     projects = Project.objects.filter(is_active=True, is_deleted=False)
 
     return render(req,'explore.html',{'projects':projects})
-    
+
