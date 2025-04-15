@@ -10,4 +10,7 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('profile/edit/', edit_profile, name='edit_profile'),
     path('logout/', logout, name='logout'),
+    path('delete-account/', delete_account, name='delete_account'),
+    path('password-change/', change_password, name='password_change'),
+    path('password-change/done/', password_change_done, name='password_change_done'),
 ]

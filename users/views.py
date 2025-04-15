@@ -4,7 +4,8 @@ from django.contrib.auth import (
     authenticate, 
     login as auth_login, 
     logout as auth_logout,
-    get_user_model
+    get_user_model,
+    update_session_auth_hash
 )
 
 User = get_user_model()
@@ -23,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models  # Added missing import for database aggregation functions
 import re
 from django.views.generic import DetailView
-from .forms import UserProfileEditForm
+from .forms import UserProfileEditForm, DeleteAccountForm, PasswordChangeForm
 
 
 
@@ -278,3 +279,62 @@ def edit_profile(request):
         form = UserProfileEditForm(instance=user)
     
     return render(request, 'users/edit_profile.html', {'form': form})
+
+@login_required
+def delete_account(request):
+    """Handle account deletion with proper confirmation and data transfer"""
+    user = request.user
+    
+    # Admin users cannot delete their accounts
+    if user.is_admin or user.is_superuser:
+        messages.error(request, "Administrator accounts cannot be deleted.")
+        return redirect('users:profile')
+    
+    if request.method == 'POST':
+        form = DeleteAccountForm(request.POST)
+        
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+            
+            # Verify password
+            if not user.check_password(password):
+                messages.error(request, "The password you entered is incorrect.")
+                return render(request, 'users/delete_account.html', {'form': form})
+            
+            # Password verified, proceed with deletion
+            # The pre_delete signal handler in models.py will handle data transfer
+            username = user.username  # Store username for message
+            auth_logout(request)  # Log the user out
+            user.delete()  # This triggers the pre_delete signal to handle data transfer
+            
+            messages.success(
+                request, 
+                f"Your account ({username}) has been deleted successfully. All your content has been anonymized."
+            )
+            return redirect('home')
+    else:
+        form = DeleteAccountForm()
+    
+    return render(request, 'users/delete_account.html', {'form': form})
+
+@login_required
+def change_password(request):
+    """Custom password change view with better styling."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Important: update the session to prevent the user from being logged out
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('users:password_change_done')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'registration/password_change_form.html', {'form': form})
+
+@login_required
+def password_change_done(request):
+    """Show success page after password change."""
+    return render(request, 'registration/password_change_done.html')
