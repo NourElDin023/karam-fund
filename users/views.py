@@ -225,10 +225,21 @@ def profile_view(request):
     profile_user = request.user
     user_profile = getattr(profile_user, 'userprofile', None)
     
+    # Get user's projects
+    user_projects = profile_user.project_set.all().order_by('-campaign_start')
+    
+    # Add media to each project
+    projects_with_media = [
+        {"project": project, "media": project.media.filter(media_type="image").first()}
+        for project in user_projects
+    ]
+    
     context = {
         'profile_user': profile_user,
         'user_profile': user_profile,
-        'member_since': profile_user.date_joined.strftime("%B %d, %Y")
+        'member_since': profile_user.date_joined.strftime("%B %d, %Y"),
+        'user_projects': projects_with_media,
+        'project_count': user_projects.count()
     }
     return render(request, 'users/profile_detail.html', context)
 
