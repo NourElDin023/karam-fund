@@ -33,32 +33,54 @@ def donate_to_project(request, project_id):
             amount = request.POST.get("amount")
             anonymous = request.POST.get("anonymous") == "on"  # Check if anonymous checkbox is checked
 
-        try:
-            amount = float(amount)
-            if amount <= 0:
-                messages.error(request, "Donation amount must be greater than zero.")
+            try:
+                # Convert to float first for validation
+                amount_float = float(amount)
+                if amount_float <= 0:
+                    messages.error(request, "Donation amount must be greater than zero.")
+                    return redirect("donate_to_project", project_id=project_id)
+                
+                # Round to 2 decimal places to prevent validation error
+                amount_decimal = Decimal(amount_float).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+                
+                # Create the donation
+                donation = ProjectDonations.objects.create(
+                    user=request.user,
+                    project=project,
+                    amount=amount_decimal,
+                    anonymous=anonymous,
+                )
+
+                # Update the current amount of the project
+                project.current_amount += amount_decimal
+                project.save()
+
+                # Set success flags for template
+                donation_success = True
+                donation_amount = amount_decimal
+                
+                message_type = "anonymous " if anonymous else ""
+                messages.success(
+                    request,
+                    f"Thank you for your {message_type}donation of ${amount_decimal:.2f} to {project.title}!",
+                )
+                
+                # Instead of redirecting, render the same page with success context
+                context = {
+                    "project": project,
+                    "donation_success": donation_success,
+                    "donation_amount": donation_amount,
+                    "anonymous": anonymous
+                }
+                return render(request, "donations/donate_success.html", context)
+                
+            except ValueError:
+                messages.error(request, "Please enter a valid amount.")
                 return redirect("donate_to_project", project_id=project_id)
 
-            # Create the donation
-            donation = ProjectDonations.objects.create(
-                user=request.user,
-                project=project,
-                amount=amount,
-            )
-
-            # Update the current amount of the project - convert float to Decimal
-            project.current_amount += Decimal(str(amount))
-            project.save()
-
-            messages.success(
-                request,
-                f"Thank you for your donation of ${amount:.2f} to {project.title}!",
-            )
-            return redirect("donate_to_project", project_id=project_id)
-
-        except ValueError:
-            messages.error(request, "Please enter a valid amount.")
-            return redirect("donate_to_project", project_id=project_id)
-
-    context = {"project": project}
-    return render(request, "donations/donate.html", context)
+        context = {"project": project}
+        return render(request, "donations/donate.html", context)
+        
+    except Project.DoesNotExist:
+        messages.error(request, "The project you're looking for doesn't exist.")
+        return redirect("home")

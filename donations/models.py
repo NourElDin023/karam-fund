@@ -12,6 +12,7 @@ class ProjectDonations(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
     donation_date = models.DateTimeField(auto_now_add=True)
+    anonymous = models.BooleanField(default=False)  # New field for anonymous donations
     
     def clean(self):
         if self.amount <= 0:
@@ -25,4 +26,7 @@ class ProjectDonations(models.Model):
     def __str__(self):
         user = self.user.username if self.user else 'Unknown User'
         project = self.project.title if self.project else 'Unknown Project'
-        return f"{user} donated {self.amount} to {project}"
+        if self.anonymous:
+            return f"Anonymous donated {self.amount} to {project}"
+        else:
+            return f"{user} donated {self.amount} to {project}"
