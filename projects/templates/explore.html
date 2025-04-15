@@ -4,51 +4,80 @@
 {% block CustomCss %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <style>
-    .card-img-top {
+    .card-img-container {
         height: 200px;
-        object-fit: cover;
-    }
-    .card-title {
-        font-size: 1.25rem;
-        font-weight: bold;
-    }
-    .card-text {
-        font-size: 0.9rem;
-        color: #555;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
+        overflow: hidden;
     }
 </style>
 {% endblock %}
 {% block content %}
 <div class="container mt-5">
     <h1 class="mb-4 text-center">Explore Projects</h1>
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for project in projects %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                {% if project.media.all|length > 0 %}
-                <img src="{{ project.media.first.image.url }}" class="card-img-top" alt="{{ project.title }}">
-                {% else %}
-                <img src="{% static 'images/default_project.jpg' %}" class="card-img-top" alt="Default Image">
-                {% endif %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-img-container">
+                    {% if project.media.all|length > 0 and project.media.first.image %}
+                    <img src="{{ project.media.first.image.url }}" 
+                         class="card-img-top"
+                         alt="{{ project.title }}"
+                         style="height: 100%; object-fit: cover;">
+                    {% else %}
+                    <img src="{% static 'imgs/default-image.png' %}" 
+                         class="card-img-top"
+                         alt="{{ project.title }}"
+                         style="height: 100%; object-fit: cover;">
+                    {% endif %}
+                </div>
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ project.title }}</h5>
-                    <p class="card-text">{{ project.description|truncatewords:20 }}</p>
-                    <p class="text-muted mb-2">Category: <strong>{{ project.category.name }}</strong></p>
-                    <a href="{% url 'project_detail' project.id %}" class="btn btn-primary mt-auto">View Details</a>
+                    <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-calendar3"></i> Created: {{ project.campaign_start|date:"M d, Y" }}
+                    </p>
+                    <p class="card-text text-muted">{{ project.description|truncatechars:85 }}</p>
+                    <div class="mt-auto">
+                        <!-- Progress Bar -->
+                        <div class="progress mb-2" style="height: 8px;">
+                            {% if project.target_amount > 0 %}
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio project.current_amount project.target_amount 100 %}%;" 
+                                 aria-valuenow="{% widthratio project.current_amount project.target_amount 100 %}" 
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                            {% else %}
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: 0%;" 
+                                 aria-valuenow="0" 
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Funding Info -->
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>${{ project.current_amount|floatformat:0 }} raised</span>
+                            <span>${{ project.target_amount|floatformat:0 }} goal</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-tag"></i> {{ project.category }}
+                            </small>
+                            {% if project.avg_rating %}
+                            <small class="text-warning">
+                                <i class="bi bi-star-fill"></i> {{ project.avg_rating }}
+                            </small>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'project_detail' project.id %}" class="btn btn-primary w-100">Learn More</a>
+                    </div>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <p class="text-center text-muted">No projects found.</p>
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle me-2"></i>No projects found.
+            </div>
         </div>
         {% endfor %}
     </div>
