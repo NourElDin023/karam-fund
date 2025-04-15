@@ -44,9 +44,25 @@ class ProjectRatingsForm(forms.ModelForm):
     class Meta:
         model = ProjectRatings
         fields = ["rate"]
-from django import forms
-from .models import Project, Tag
-from django.forms import DateInput
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
+
 
 class AddNewProject(forms.ModelForm):
     """
@@ -69,10 +85,10 @@ class AddNewProject(forms.ModelForm):
     )
 
     # Images field for uploading multiple images
-    images = forms.FileField(
+    images = MultipleFileField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={'multiple': False}),
-        label="Upload Images"
+        label="Upload Images",
+        widget=MultipleFileInput(attrs={'class': 'form-control'})
     )
 
     class Meta:
