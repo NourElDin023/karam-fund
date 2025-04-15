@@ -16,11 +16,11 @@ def search_projects(request):
     query = request.GET.get('q', '')
     
     if query:
-        # Search in title, description and tags - fixing the tag lookup
+        # Search in title, description and tags
         projects = Project.objects.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
-            Q(tags__tag__name__icontains=query)  # Fixed: search on tag name not the tag object
+            Q(tags__tag__name__icontains=query)
         ).distinct()
         
         # Add media to each project for display
@@ -122,7 +122,26 @@ class ProjectDetailView(DetailView):
         ]
 
         context["form1"] = ProjectCommentsForm()
-        context["form2"] = ProjectRatingsForm()
+        
+        # Check if user is authenticated and has already rated this project
+        if self.request.user.is_authenticated:
+            # Get the latest user rating instead of assuming there's only one
+            user_ratings = ProjectRatings.objects.filter(
+                user=self.request.user,
+                project=project
+            ).order_by('-created_at')
+            
+            if user_ratings.exists():
+                # Use the most recent rating
+                user_rating = user_ratings.first()
+                context["form2"] = ProjectRatingsForm(instance=user_rating)
+                context["has_rated"] = True
+            else:
+                context["form2"] = ProjectRatingsForm()
+                context["has_rated"] = False
+        else:
+            context["form2"] = ProjectRatingsForm()
+            context["has_rated"] = False
 
         context["main_comments"] = project.projectcomments_set.filter(
             is_deleted=False, parent_comment__isnull=True
@@ -148,10 +167,23 @@ class ProjectDetailView(DetailView):
             return redirect("project_detail", pk=project.pk)
 
         if form2.is_valid() and "rate" in request.POST:
-            rating = form2.save(commit=False)
-            rating.user = request.user
-            rating.project = project
-            rating.save()
+            # Find the user's most recent rating for this project (if any)
+            existing_rating = ProjectRatings.objects.filter(
+                user=request.user,
+                project=project
+            ).order_by('-created_at').first()
+            
+            if existing_rating:
+                # Update the most recent rating
+                existing_rating.rate = form2.cleaned_data['rate']
+                existing_rating.save()
+            else:
+                # Create a new rating if none exists
+                rating = form2.save(commit=False)
+                rating.user = request.user
+                rating.project = project
+                rating.save()
+                
             return redirect("project_detail", pk=project.pk)
 
         context = self.get_context_data()

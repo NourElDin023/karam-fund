@@ -310,7 +310,7 @@
         <div class="card-body p-4 text-center">
           <div class="mb-3">
             <span class="fs-1 fw-bold text-warning">{{ project.avg_rating }}</span>
-            <div class="text-warning mb-2">
+            <!-- <div class="text-warning mb-2">
               {% for i in "12345" %}
                 {% if forloop.counter <= project.avg_rating|add:"0.5"|floatformat:"0" %}
                   <i class="bi bi-star-fill"></i>
@@ -318,7 +318,7 @@
                   <i class="bi bi-star"></i>
                 {% endif %}
               {% endfor %}
-            </div>
+            </div> -->
             <p class="text-muted mb-0">Based on {{ total_ratings }} review{% if total_ratings != 1 %}s{% endif %}</p>
           </div>
           
