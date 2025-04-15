@@ -71,7 +71,8 @@ class AddNewProject(forms.ModelForm):
     # Images field for uploading multiple images
     images = forms.FileField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        widget=forms.ClearableFileInput(attrs={'multiple': False}),
+        label="Upload Images"
     )
 
     class Meta:
